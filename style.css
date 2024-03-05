@@ -1,0 +1,115 @@
+@import "node_modules/ol/ol.css";
+
+html,
+
+/* // <uniquifier>: Use a uniquifier for the class name
+// <weight>: Use a value from 100 to 900 */
+
+.montserrat-#nav_bar {
+  font-family: "Montserrat", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 300;
+  font-style: normal;
+}
+
+*{
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  margin: 0;
+  height: 100vh;
+  width: 100vw;
+  /* background: url('./modules/mapp.jpg'); */
+
+}
+
+#map {
+  position: absolute;
+  top: 30px;
+  bottom: 0;
+  width: 100%;
+}
+
+
+.material-symbols-outlined:hover {
+  cursor: pointer;
+  color: #525353;
+  
+}
+
+/* #navbar {
+  display: flex;
+  height: 70px;
+  width: 100%;
+  background: url(./modules/sea.jpg);
+  font-family:Sans-serif, Courier, monospace;
+  color: #fff;
+} */
+
+
+
+/* #navbar #logo img {
+  
+  height: 60px;
+  margin: 7px;
+} */
+
+/* #navbar #navbar_text h2 {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 24px;
+  color: #ffffff;
+ 
+} */
+
+#layers_container {
+
+  position: absolute;
+  top: 72px;
+  left: 7px;
+}
+
+#layer_list {
+  display: none;
+  position: relative;
+  top: -30px;
+  left:30px;
+
+  background-color: #d1d1d1;
+  width: 100px;
+}
+
+
+/* input+label::after {
+  content: '';
+  display: block;
+  width: 90%;
+  height: .5px;
+  background-color: black;
+  margin:auto;
+} */
+
+
+
+
+
+#layers_container.expanded #layer_list {
+  max-height: 500px;
+  /* Set max-height to a value large enough to fit all content */
+}
+
+
+.custom-mouse-position {
+  position: fixed;
+  bottom: 10px;
+  left: 50%;
+  font-size: 12px;
+  padding: 7px;
+  background-color: #b7b7b7;
+  border: 1px solid #000;
+  border-radius: 14px;
+}
+
