@@ -15,6 +15,14 @@ import { unByKey } from 'ol/Observable.js';
 import MousePosition from 'ol/control/MousePosition.js';
 import { format } from 'ol/coordinate.js';
 
+import { ScaleLine, defaults as defaultControls } from 'ol/control.js';
+import {
+  getPointResolution,
+  get as getProjection,
+  transform,
+} from 'ol/proj.js';
+
+
 
 
 const raster = new TileLayer({
@@ -47,8 +55,6 @@ const map = new Map({
   controls: [],
   keyboardEventTarget: document
 });
-
-
 
 
 
@@ -530,7 +536,7 @@ let mousePos = new MousePosition({
 
     let lncoor = lndegrees + "° " + lnminutes.toFixed(2) + "'"
 
-    let DDcoord = ltcoor + "  N "+  lncoor + "E";
+    let DDcoord = ltcoor + "  N " + lncoor + "E";
 
     console.log(DDcoord)
     coordPos.innerHTML = DDcoord;
@@ -543,3 +549,13 @@ let mousePos = new MousePosition({
 
 map.addControl(mousePos);
 
+//  Co-Ordinate Feature Ends .............
+
+
+
+
+
+// Scale Line Feature Added.........................
+
+
+// Scale Line Feature End.........................

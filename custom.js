@@ -14,14 +14,11 @@ menuToggle.addEventListener('click', () => {
         console.log(navmenuOpen.style.display)
         console.log(navmenuClose.style.display)
 
-
-
     }else{
         navmenuOpen.style.display='block'
         navmenuClose.style.display='none'
         console.log(navmenuOpen.style.display)
         console.log(navmenuClose.style.display)
-
 
     }
 
@@ -78,20 +75,41 @@ function display_toggle(id) {
     }
   });
   
-  
 
-  
-function display_toggle_block(id){
-    let eldId = document.getElementById(id);
-    console.log(window.getComputedStyle(eldId).display)
-    if(window.getComputedStyle(eldId).display==='block'){
-        eldId.style.display='none'
-    }else{
-        eldId.style.display='block'
 
+function display_toggle_block(id) {
+  // Get the element with the specified ID
+  const clickedSubMenu = document.getElementById(id);
+
+  // Get all existing sub-menus
+  const subMenus = document.querySelectorAll('.side_menu_container_optins .side_menu_cat2.show');
+
+  // Close all open sub-menus except the clicked one
+  subMenus.forEach(subMenu => {
+    if (subMenu !== clickedSubMenu) {
+      subMenu.classList.remove('show');  //close others
     }
+  });
 
+  // Toggle the clicked sub-menu's visibility
+  clickedSubMenu.classList.toggle('show');       //display-hide toggle
 }
 
+function display_toggle_block_adminState(id) {
+  // Get the element with the specified ID
+  const clickedSubMenu = document.getElementById(id);
 
+  // Get all existing sub-menus
+  const subMenus = document.querySelectorAll('.side_menu_container_optins .side_menu_cat3.show');
+
+  // Close all open sub-menus except the clicked one
+  subMenus.forEach(subMenu => {
+    if (subMenu !== clickedSubMenu) {
+      subMenu.classList.remove('show');  //close others
+    }
+  });
+
+  // Toggle the clicked sub-menu's visibility
+  clickedSubMenu.classList.toggle('show');       //display-hide toggle
+}
 

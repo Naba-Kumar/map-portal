@@ -231,6 +231,10 @@ ul{
    
 }
 
+.side_menu_cat2.show {
+    display: block;
+}
+
 .side_menu_cat2 li{
     background-color: #83E9A6;
     border-radius: 6PX;
@@ -246,6 +250,10 @@ ul{
     display: none;
     font-size: 13px;
    
+}
+
+.side_menu_cat3.show {
+    display: block;
 }
 
 .side_menu_cat3 li{

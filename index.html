@@ -53,7 +53,7 @@
             <li onclick="display_toggle_block('admin_state')">Admin Satate</li>
             <ul class="side_menu_optin_block, side_menu_cat2" id="admin_state">
 
-              <li onclick="display_toggle_block('Boudaries')">Boudaries</li>
+              <li onclick="display_toggle_block_adminState('Boudaries')">Boudaries</li>
               <ul class="side_menu_optin_block, side_menu_cat3" id="Boudaries">
                 <li> <input type="checkbox" name="sb"> <label for="sb" namse="sb"></label> State Boundary</a></li>
                 <li> <input type="checkbox"> <label for="District Boundary"></label> District Boundary</a></li>
@@ -64,7 +64,7 @@
               </ul>
               </li>
 
-              <li onclick="display_toggle_block('Transport')">Transport</li>
+              <li onclick="display_toggle_block_adminState('Transport')">Transport</li>
               <ul class="side_menu_optin_block, side_menu_cat3" id="Transport">
                 <li> <input type="checkbox"> State Highway</li>
                 <li> <input type="checkbox"> Major Roads</li>
@@ -73,7 +73,7 @@
               </ul>
               </li>
 
-              <li onclick="display_toggle_block('Forest')">Forest</li>
+              <li onclick="display_toggle_block_adminState('Forest')">Forest</li>
               <ul class="side_menu_optin_block, side_menu_cat3" id="Forest">
                 <li> <input type="checkbox"> <label for=""> Forest1 </label></li>
                 <li> <input type="checkbox"> <label for=""> Forest2 </label></li>
@@ -81,7 +81,7 @@
               </ul>
               </li>
 
-              <li onclick="display_toggle_block('Water')">Water</li>
+              <li onclick="display_toggle_block_adminState('Water')">Water</li>
               <ul class="side_menu_optin_block, side_menu_cat3" id="Water">
                 <li> <input type="checkbox"> <label for="">w1</label> </li>
                 <li> <input type="checkbox"> <label for="">w2</label> </li>
@@ -89,7 +89,7 @@
               </ul>
               </li>
 
-              <li onclick="display_toggle_block('Soil')">Soil</li>
+              <li onclick="display_toggle_block_adminState('Soil')">Soil</li>
               <ul class="side_menu_optin_block, side_menu_cat3" id="Soil">
                 <li> <input type="checkbox"> <label for="">s1</label> </li>
                 <li> <input type="checkbox"> <label for="">s2</label> </li>
@@ -99,14 +99,14 @@
 
 
 
-              <li onclick="display_toggle_block('Electoral')">Electoral</li>
+              <li onclick="display_toggle_block_adminState('Electoral')">Electoral</li>
               <ul class="side_menu_optin_block, side_menu_cat3" id="Electoral">
                 <li> <input type="checkbox"> <label for=""> Loksabha Boundaries</label></li>
                 <li> <input type="checkbox"> <label for=""> Assembly Boundaries</label></li>
               </ul>
               </li>
 
-              <li onclick="display_toggle_block('Anganwadi')">Anganwadi</li>
+              <li onclick="display_toggle_block_adminState('Anganwadi')">Anganwadi</li>
               <ul class="side_menu_optin_block, side_menu_cat3" id="Anganwadi">
                 <li> <input type="checkbox"> <label for=""> A1 </label></li>
                 <li> <input type="checkbox"> <label for=""> A2 </label></li>
@@ -114,7 +114,7 @@
               </ul>
               </li>
 
-              <li onclick="display_toggle_block('Hospital')">Hospital Loaction</li>
+              <li onclick="display_toggle_block_adminState('Hospital')">Hospital Loaction</li>
               <ul class="side_menu_optin_block, side_menu_cat3" id="Hospital">
                 <li> <input type="checkbox"> <label for=""> District Hospital </label></li>
                 <li> <input type="checkbox"> <label for=""> Government Hospital </label></li>
@@ -135,7 +135,7 @@
               </ul>
               </li>
 
-              <li onclick="display_toggle_block('School')">School</li>
+              <li onclick="display_toggle_block_adminState('School')">School</li>
               <ul class="side_menu_optin_block, side_menu_cat3" id="School">
                 <li> <input type="checkbox"> <label for=""> School1 </label></li>
                 <li> <input type="checkbox"> <label for=""> School2 </label></li>
@@ -143,7 +143,7 @@
               </ul>
               </li>
 
-              <li onclick="display_toggle_block('MIDC')">MIDC Location</li>
+              <li onclick="display_toggle_block_adminState('MIDC')">MIDC Location</li>
               <ul class="side_menu_optin_block, side_menu_cat3" id="MIDC">
                 <li> <input type="checkbox"> <label for=""> MIDC1 </label></li>
                 <li> <input type="checkbox"> <label for=""> MIDC2 </label></li>
@@ -151,7 +151,7 @@
               </ul>
               </li>
 
-              <li onclick="display_toggle_block('Warehouse')">Warehouse Location</li>
+              <li onclick="display_toggle_block_adminState('Warehouse')">Warehouse Location</li>
               <ul class="side_menu_optin_block, side_menu_cat3" id="Warehouse">
                 <li> <input type="checkbox"> <label for=""> Warehouse1 </label></li>
                 <li> <input type="checkbox"> <label for=""> Warehouse2 </label></li>
@@ -362,7 +362,7 @@
 
           <!-- Pin Drop -->
           <li class="sidebar_items">
-            <span class="material-symbols-outlined"   onclick="display_toggle_block('pindrop_tool')">pin_drop</span>
+            <span class="material-symbols-outlined"   onclick="display_toggle_block_tools('pindrop_tool')">pin_drop</span>
             <ul id="pindrop_tool"  class="sub-menu">
               <form class="form">
                 <label for="format">Enter Longitude </label>
@@ -406,7 +406,11 @@
   </div>
 
   <div id="mesure_scale">
-    <img src="./modules/measurescaleimg.png" alt="">
+    <label for="view-projection">View projection</label>
+      <select id="view-projection">
+        <option value="EPSG:3857">Spherical Mercator (EPSG:3857)</option>
+        <option value="EPSG:4326" selected>WGS 84 (EPSG:4326)</option>
+      </select>
 
   </div>
 
