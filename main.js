@@ -1,4 +1,6 @@
 import './style.css';
+import 'ol-layerswitcher/dist/ol-layerswitcher.css';
+
 import { Map, View } from 'ol';
 import OSM from 'ol/source/OSM';
 // import {FullScreen, defaults as defaultControls} from 'ol/control.js';
@@ -14,6 +16,9 @@ import { getArea, getLength } from 'ol/sphere.js';
 import { unByKey } from 'ol/Observable.js';
 import MousePosition from 'ol/control/MousePosition.js';
 import { format } from 'ol/coordinate.js';
+import LayerGroup from 'ol/layer/Group';
+import LayerSwitcher from 'ol-layerswitcher';
+import { BaseLayerOptions, GroupLayerOptions } from 'ol-layerswitcher';
 
 import { ScaleLine, defaults as defaultControls } from 'ol/control.js';
 import {
@@ -28,6 +33,7 @@ import {
 const raster = new TileLayer({
   source: new OSM(),
 });
+
 
 // const source = new VectorSource();
 
@@ -107,9 +113,6 @@ window.handleZoom = function (event) {
 
 //Custom Full Screen functionality Starts....
 
-
-
-
 function customFullscreen(event) {
   if (document.fullscreenEnabled) {
     // Fullscreen API is supported
@@ -168,6 +171,7 @@ window.handleFullscreen = function (event) {
 
 
 
+// Measure Tool starts here.................
 
 /**
  * Currently drawn feature.
@@ -434,12 +438,11 @@ window.handleMeasure = function (event) {
   map.removeInteraction(draw);
   customMeasure(event);
 };
+// measure tool ends...........
 
 
 
-
-// Draw feature
-
+// Draw feature starts.........
 const drawStyles = {
   Point: {
     'circle-radius': 5,
@@ -492,7 +495,7 @@ window.handleDraw = function (event) {
 
 
 
-//Pindrop / Locate featue Starts....
+//Pindrop Locate featue Starts....
 
 function locate() {
   let lon = document.getElementById("lon").value;
@@ -511,7 +514,9 @@ window.handleLocate = function () {
 // Pindrop / Locate featue Ends.....
 
 
-// coordinate 
+
+
+// coordinate tool starts ................
 
 const coordPos = document.getElementById('lonlat_display');
 
@@ -559,3 +564,9 @@ map.addControl(mousePos);
 
 
 // Scale Line Feature End.........................
+
+
+
+// Layer swither tool starts ...........
+
+// Layer swither tool ends...........

@@ -113,3 +113,89 @@ function display_toggle_block_adminState(id) {
   clickedSubMenu.classList.toggle('show');       //display-hide toggle
 }
 
+
+
+// Add an event listener to the form to prevent click propagation
+document.getElementById('filterForm').addEventListener('click', function(event) {
+  event.stopPropagation(); // Stop the click event from propagating to the parent elements
+});
+
+
+document.getElementById('printform').addEventListener('click', function(event) {
+  event.stopPropagation(); // Stop the click event from propagating to the parent elements
+});
+
+// Function to toggle the side popup
+function display_toggle_side_Popup(id) {
+  // Get the element with the specified ID
+  const clickedSubMenu = document.getElementById(id);
+
+  // Get all existing sub-menus
+  const subMenus = document.querySelectorAll('.sidebar_items .side_menu_popup.show');
+
+  // Close all open sub-menus except the clicked one
+  subMenus.forEach(subMenu => {
+    if (subMenu !== clickedSubMenu) {
+      subMenu.classList.remove('show'); // Close others
+    }
+  });
+
+  // Toggle the clicked sub-menu's visibility
+  clickedSubMenu.classList.toggle('show'); // Toggle display
+}
+
+
+
+// --------------------------------------------------------
+// Layer select
+
+async function fetchJSON(url) {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('There was a problem with your fetch operation:', error);
+  }
+}
+
+// Function to populate the state dropdown
+async function populateStates() {
+  const jsonData = await fetchJSON('./states-and-districts.json');
+  const stateSelect = document.getElementById("state");
+  jsonData.states.forEach(stateData => {
+    const option = document.createElement("option");
+    option.text = stateData.state;
+    option.value = stateData.state;
+    stateSelect.add(option);
+  });
+}
+
+// Function to populate the district dropdown based on the selected state
+async function populateDistricts() {
+  const jsonData = await fetchJSON('./states-and-districts.json');
+  const stateSelect = document.getElementById("state");
+  const districtSelect = document.getElementById("district");
+  const selectedState = stateSelect.value;
+  districtSelect.innerHTML = "<option value=''>Select District</option>"; // Clear previous options
+
+  if (selectedState) {
+    const selectedStateData = jsonData.states.find(state => state.state === selectedState);
+    if (selectedStateData) {
+      selectedStateData.districts.forEach(district => {
+        const option = document.createElement("option");
+        option.text = district;
+        option.value = district;
+        districtSelect.add(option);
+      });
+    }
+  }
+}
+
+// Attach event listeners
+document.getElementById("state").addEventListener("change", populateDistricts);
+
+// Populate states when the page loads
+populateStates();

@@ -275,10 +275,10 @@
             </ul>
           </li>
       
-          <li class="sidebar_items"  onclick="display_toggle('Print_tool')" >
+          <li class="sidebar_items"  onclick="display_toggle_side_Popup('Print_tool')" >
             <span class="material-symbols-outlined" >print</span>
-            <ul id="Print_tool"  class="sub-menu">
-              <form class="form">
+            <ul id="Print_tool"  class="side_menu_popup">
+              <form id="printform">
                 <label for="format">Page size </label>
                 <select id="format">
                   <option value="a0">A0 (slow)</option>
@@ -309,61 +309,87 @@
             </ul>
 
           </li>
-          <li class="sidebar_items" onclick="display_toggle_block('layers_tool')">
-            <span class="material-symbols-outlined">stacks</span>
-            <form id="layers_tool">
-
-              <div class="inputGroup">
-                <input type="checkbox" id="rivers" name="rivers" value="rivers_pgis"
-                  onchange="handleLayerToggle(event)">
-                <label for="rivers">rivers</label> <br>
-              </div>
-
-              <div class="inputGroup">
-                <input type="checkbox" id="india_st" name="india_st" value="india_st_pgis"
-                  onchange="handleLayerToggle(event)">
-                <label for="india_st">india states</label> <br>
-              </div>
-
-              <div class="inputGroup">
-                <input type="checkbox" id="dams" name="dams" value="indian_dams" onchange="handleLayerToggle(event)">
-                <label for="dams">dams</label> <br>
-              </div>
-
-              <div class="inputGroup">
-                <input type="checkbox" id="base" name="base" value="osmTile" checked
-                  onchange="handleLayerToggle(event)">
-                <label for="Base">OSM</label> <br>
-              </div>
-              <div class="inputGroup">
-                <input type="checkbox" id="rivers" name="rivers" value="rivers_pgis"
-                  onchange="handleLayerToggle(event)">
-                <label for="rivers">rivers</label> <br>
-              </div>
-
-              <div class="inputGroup">
-                <input type="checkbox" id="india_st" name="india_st" value="india_st_pgis"
-                  onchange="handleLayerToggle(event)">
-                <label for="india_st">india states</label> <br>
-              </div>
-
-              <div class="inputGroup">
-                <input type="checkbox" id="dams" name="dams" value="indian_dams" onchange="handleLayerToggle(event)">
-                <label for="dams">dams</label> <br>
-              </div>
-
-              <div class="inputGroup">
-                <input type="checkbox" id="base" name="base" value="osmTile" checked
-                  onchange="handleLayerToggle(event)">
-                <label for="Base">OSM</label> <br>
-              </div>
-            </form>
+          
+          
           </li>
+          <li class="sidebar_items" onclick="display_toggle_side_Popup('layers_tool')">
+            <span class="material-symbols-outlined">stacks</span>
+            <ul id="layers_tool" class="side_menu_popup">
+
+              <div class="inputGroup">
+                <input type="checkbox" id="rivers" name="rivers" value="rivers_pgis"
+                  onchange="handleLayerToggle(event)">
+                <label for="rivers">rivers</label> <br>
+              </div>
+
+              <div class="inputGroup">
+                <input type="checkbox" id="india_st" name="india_st" value="india_st_pgis"
+                  onchange="handleLayerToggle(event)">
+                <label for="india_st">india states</label> <br>
+              </div>
+
+              <div class="inputGroup">
+                <input type="checkbox" id="dams" name="dams" value="indian_dams" onchange="handleLayerToggle(event)">
+                <label for="dams">dams</label> <br>
+              </div>
+
+              <div class="inputGroup">
+                <input type="checkbox" id="base" name="base" value="osmTile" checked
+                  onchange="handleLayerToggle(event)">
+                <label for="Base">OSM</label> <br>
+              </div>
+              <div class="inputGroup">
+                <input type="checkbox" id="rivers" name="rivers" value="rivers_pgis"
+                  onchange="handleLayerToggle(event)">
+                <label for="rivers">rivers</label> <br>
+              </div>
+
+              <div class="inputGroup">
+                <input type="checkbox" id="india_st" name="india_st" value="india_st_pgis"
+                  onchange="handleLayerToggle(event)">
+                <label for="india_st">india states</label> <br>
+              </div>
+
+              <div class="inputGroup">
+                <input type="checkbox" id="dams" name="dams" value="indian_dams" onchange="handleLayerToggle(event)">
+                <label for="dams">dams</label> <br>
+              </div>
+
+              <div class="inputGroup">
+                <input type="checkbox" id="base" name="base" value="osmTile" checked
+                  onchange="handleLayerToggle(event)">
+                <label for="Base">OSM</label> <br>
+              </div>
+            </ul>
+          </li>
+
+          <!--  -->
+        
+        <li class="sidebar_items" onclick="display_toggle_side_Popup('boundary_tool')">
+          <span class="material-symbols-outlined">Layers</span>
+          <ul id="boundary_tool" class="side_menu_popup">
+
+            <form id="filterForm">
+              <label for="state">Select State:</label>
+              <select id="state" name="state">
+                <option value="">Select State</option>
+              </select>
+          
+              <label for="district">Select District:</label>
+              <select id="district" name="district">
+                <option value="">Select District</option>
+              </select>
+
+            </form>
+            <button id="Select"  onclick="">Select</button>
+
+          </ul>
+        </li>
 
           <!-- Pin Drop -->
           <li class="sidebar_items">
-            <span class="material-symbols-outlined"   onclick="display_toggle_block_tools('pindrop_tool')">pin_drop</span>
-            <ul id="pindrop_tool"  class="sub-menu">
+            <span class="material-symbols-outlined"   onclick="display_toggle_side_Popup('pindrop_tool')">pin_drop</span>
+            <ul id="pindrop_tool"  class="sub-menu, side_menu_popup">
               <form class="form">
                 <label for="format">Enter Longitude </label>
                <input type="text" id="lon" placeholder="Longitude" value="">
@@ -394,7 +420,7 @@
   </div>
 
   <div id="base_layer_container">
-    <div id="base_layer_container_icon" onclick="display_toggle_block('base_layer_menu')"></div>
+    <div id="base_layer_container_icon" onclick="display_toggle_side_Popup('base_layer_menu')"></div>
     <div id="base_layer_menu">
       <ul id="base_layer_list">
         <li> <label for="">Standard</label> <img src="./modules/standardmapimg.jpeg" alt=""> </li>
