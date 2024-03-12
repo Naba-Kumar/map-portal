@@ -19,6 +19,11 @@ import { format } from 'ol/coordinate.js';
 import LayerGroup from 'ol/layer/Group';
 import LayerSwitcher from 'ol-layerswitcher';
 import { BaseLayerOptions, GroupLayerOptions } from 'ol-layerswitcher';
+import GeoJSON from 'ol/format/GeoJSON';
+import Feature from 'ol/Feature.js';
+import Point from 'ol/geom/Point.js';
+import Icon from 'ol/style/Icon.js';
+
 
 import { ScaleLine, defaults as defaultControls } from 'ol/control.js';
 import {
@@ -26,7 +31,6 @@ import {
   get as getProjection,
   transform,
 } from 'ol/proj.js';
-
 
 
 
@@ -56,13 +60,16 @@ const map = new Map({
   target: 'map',
   view: new View({
     center: new fromLonLat([92.07298769282396, 26.213469404852535]),
-    zoom: 6
+    zoom: 7
   }),
   controls: [],
   keyboardEventTarget: document
 });
 
-
+let scaleLineControl = new ScaleLine({
+  className: "scaleLine",
+});
+map.addControl(scaleLineControl);
 
 //Custom Home Click functionality Starts....
 
@@ -71,7 +78,7 @@ function customHome(event) {
   // const homeButton = document.getElementById(event);
   const homeCoords = [10300257, 3061038];
   map.getView().setCenter(homeCoords);
-  map.getView().setZoom(6); // Optional: Set zoom level for home view
+  map.getView().setZoom(7); // Optional: Set zoom level for home view
 }
 
 window.handleHome = function (event) {
@@ -313,7 +320,7 @@ const style = new Style({
 
 
 function customMeasure(event) {
-  console.log(event)
+  // console.log(event)
 
   // const type = event == 'area' ? 'Polygon' : 'LineString';
 
@@ -322,7 +329,7 @@ function customMeasure(event) {
   if (event === 'clear') {
 
     // removeInteractions();
-    console.log(map.getOverlays())
+    // console.log(map.getOverlays())
     map.getOverlays().clear();
     // measureTooltip.getSource().clear();
     // helpTooltip.getSource().clear();
@@ -380,13 +387,6 @@ function customMeasure(event) {
 
 
 }
-
-
-
-
-
-
-
 
 
 /**
@@ -497,19 +497,58 @@ window.handleDraw = function (event) {
 
 //Pindrop Locate featue Starts....
 
-function locate() {
-  let lon = document.getElementById("lon").value;
-  let lat = document.getElementById("lat").value;
+// Add an empty vector source to hold pins
+const pinSource = new VectorSource();
+const pinLayer = new VectorLayer({
+  source: pinSource
+});
+map.addLayer(pinLayer);
 
-  // const homeButton = document.getElementById(event);
-  const pin = [lon, lat];
-  map.getView().setCenter(pin);
-  map.getView().setZoom(6); // Optional: Set zoom level for home view
-}
+document.getElementById('locate_Pindrop').addEventListener('click', function () {
+  // Get longitude and latitude values from input fields
+  var lon = parseFloat(document.getElementById("lon").value);
+  var lat = parseFloat(document.getElementById("lat").value);
 
-window.handleLocate = function () {
-  locate();
-};
+  // Ensure that lon and lat are valid numbers
+  if (isNaN(lon) || isNaN(lat) || lon < -180 || lon > 180 || lat < -90 || lat > 90) {
+    alert("Please enter valid longitude (-180 to 180) and latitude (-90 to 90) values.");
+    return;
+  }
+
+  // Center the map view to the specified coordinates
+  map.getView().setCenter(new fromLonLat([lon, lat]));
+  map.getView().setZoom(10); // Set desired zoom level
+
+  // Drop a pin at the specified coordinates
+  var pinFeature = new Feature({
+    geometry: new Point(fromLonLat([lon, lat]))
+  });
+
+  // Add the pin feature to the pin source
+  pinSource.addFeature(pinFeature);
+
+  var pinStyle = new Style({
+    image: new Icon({
+      anchor: [0.5, 1],
+      src: 'https://openlayers.org/en/v6.13.0/examples/data/icon.png' // URL to the pin icon
+    })
+  });
+
+  pinFeature.setStyle(pinStyle);
+
+
+})
+
+document.getElementById('locate_Pinremove').addEventListener('click', function () {
+  console.log("remove")
+
+  pinSource.clear(); // Clear all features from the pin source
+
+})
+
+
+
+
 
 // Pindrop / Locate featue Ends.....
 
@@ -543,7 +582,7 @@ let mousePos = new MousePosition({
 
     let DDcoord = ltcoor + "  N " + lncoor + "E";
 
-    console.log(DDcoord)
+    // console.log(DDcoord)
     coordPos.innerHTML = DDcoord;
 
 
@@ -570,3 +609,138 @@ map.addControl(mousePos);
 // Layer swither tool starts ...........
 
 // Layer swither tool ends...........
+
+
+// state dist Layer select tool starts
+
+
+// Create a vector source for the state layer
+const stateVectorSource = new VectorSource({
+  url: './india_state_geo.json', // Replace with your state data URL
+  format: new GeoJSON()
+});
+
+// Create a vector source for the district layer
+const districtVectorSource = new VectorSource({
+  url: './india_Districts.geojson', // Replace with your district data URL
+  format: new GeoJSON()
+});
+
+document.getElementById('selectButton').addEventListener('click', function () {
+  const selectedState = document.getElementById('state').value;
+  const selectedDistrict = document.getElementById('district').value;
+
+  // Your main logic here
+  console.log("Selected State:", selectedState);
+  console.log("Selected District:", selectedDistrict);
+  // You can perform any further processing or actions here
+
+  // Function to create a filter based on state name (adjust property name if needed)
+  function getStateFilter(selected, category) {
+    return function (feature) {
+      if (category === 'state') {
+        return feature.get('NAME_1').toLowerCase() === selected.toLowerCase(); // Modify property name based on your data
+      } else if (category === 'district') {
+        return feature.get('distname').toLowerCase() === selected.toLowerCase(); // Modify property name based on your data
+      }
+    };
+  }
+
+  // Apply the filter to the source based on selected state
+  stateVectorSource.once('change', function () {
+    stateVectorSource.getFeatures().forEach(function (feature) {
+      if (!getStateFilter(selectedState, "state")(feature)) {
+        stateVectorSource.removeFeature(feature);
+      }
+    });
+  });
+
+  // Apply the filter to the source based on selected district
+  districtVectorSource.once('change', function () {
+    districtVectorSource.getFeatures().forEach(function (feature) {
+      if (!getStateFilter(selectedDistrict, "district")(feature)) {
+        districtVectorSource.removeFeature(feature);
+      }
+    });
+  });
+
+  // Remove previous state layer if exists
+  const existingStateLayer = map.getLayers().getArray().find(layer => layer.get('name') === 'stateLayer');
+  if (existingStateLayer) {
+    map.removeLayer(existingStateLayer);
+  }
+
+  // Remove previous district layer if exists
+  const existingDistrictLayer = map.getLayers().getArray().find(layer => layer.get('name') === 'districtLayer');
+  if (existingDistrictLayer) {
+    map.removeLayer(existingDistrictLayer);
+  }
+
+  // Create a state vector layer with the filtered source
+  const stateLayer = new VectorLayer({
+    source: stateVectorSource,
+    style: new Style({
+      stroke: new Stroke({
+        color: '#000',
+        lineCap: 'butt',
+        width: 1
+      }),
+    })
+  });
+  stateLayer.set('name', 'stateLayer');
+
+  // Create a district vector layer with the filtered source
+  const districtLayer = new VectorLayer({
+    source: districtVectorSource,
+    style: new Style({
+      stroke: new Stroke({
+        color: '#a0a',
+        lineCap: 'butt',
+        width: 1
+      }),
+    })
+  });
+  districtLayer.set('name', 'districtLayer');
+
+  // Add the new layers to the map
+  map.addLayer(stateLayer);
+  map.addLayer(districtLayer);
+});
+
+// state dist Layer select tool starts
+
+// side menu options
+
+// admin states
+// state boundary
+let StateBoundaryCheck = document.getElementById("StateBoundary");
+// Add event listener to listen for changes in checkbox status
+StateBoundaryCheck.addEventListener('click', function() {
+  console.log("hii");
+  // Check if the checkbox is checked
+  if (StateBoundaryCheck.checked) {
+    console.log("Checkbox is checked");
+    // Your main logic here
+    // You can perform any further processing or actions here
+
+    // Function to create a filter based on state name (adjust property name if needed)
+    function getStateFilter(selected) {
+      return function (feature) {  
+          return feature.get('NAME_1').toLowerCase() === selected.toLowerCase(); // Modify property name based on your data
+      };
+    }
+
+    // Apply the filter to the source based on selected state
+    stateVectorSource.once('change', function () {
+      stateVectorSource.getFeatures().forEach(function (feature) {
+        if (!getStateFilter('assam')(feature)) {
+          stateVectorSource.removeFeature(feature);
+        }
+      });
+    });
+
+  } else {
+    console.log("Checkbox is not checked");
+  }
+})
+

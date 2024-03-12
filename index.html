@@ -55,11 +55,11 @@
 
               <li onclick="display_toggle_block_adminState('Boudaries')">Boudaries</li>
               <ul class="side_menu_optin_block, side_menu_cat3" id="Boudaries">
-                <li> <input type="checkbox" name="sb"> <label for="sb" namse="sb"></label> State Boundary</a></li>
-                <li> <input type="checkbox"> <label for="District Boundary"></label> District Boundary</a></li>
-                <li> <input type="checkbox"> <label for="Taluka Boundary"></label> Taluka Boundary</a></li>
-                <li> <input type="checkbox"> <label for="Village Boundary"></label> Village Boundary</a></li>
-                <li> <input type="checkbox"> <label for="Grampanchayat"></label> Grampanchayat</a></li>
+                <li> <input type="checkbox"  id=" StateBoundary"> <label for=" StateBoundary" > State Boundary</label></li>
+                <li> <input type="checkbox" id="DistrictBoundary"> <label for="DistrictBoundary">District Boundary</label> </li>
+                <li> <input type="checkbox" id="TalukaBoundary"> <label for="TalukaBoundary"> Taluka Boundary</label></li>
+                <li> <input type="checkbox" id="VillageBoundary"> <label for="VillageBoundary">Village Boundary</label> </li>
+                <li> <input type="checkbox" id="Grampanchayat"> <label for="Grampanchayat"> Grampanchayat</label></li>
 
               </ul>
               </li>
@@ -381,7 +381,7 @@
               </select>
 
             </form>
-            <button id="Select"  onclick="">Select</button>
+            <button id="selectButton"  >Select</button>
 
           </ul>
         </li>
@@ -396,7 +396,8 @@
                 <label for="resolution">Enter Latitude </label>
                 <input type="text" id="lat" placeholder="Latitude" >
               </form>
-              <button id="locate"  onclick="handleLocate()">Locate</button>
+              <button id="locate_Pindrop"  >Pindrop</button>
+              <button id="locate_Pinremove" >Remove</button>
             </ul>
           </li>
           <!-- Pin Drop -->
@@ -432,11 +433,12 @@
   </div>
 
   <div id="mesure_scale">
-    <label for="view-projection">View projection</label>
+    <!-- <label for="view-projection">View projection</label>
       <select id="view-projection">
         <option value="EPSG:3857">Spherical Mercator (EPSG:3857)</option>
         <option value="EPSG:4326" selected>WGS 84 (EPSG:4326)</option>
-      </select>
+      </select> -->
+      <div class="scaleLine"></div>
 
   </div>
 
