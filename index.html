@@ -55,11 +55,26 @@
 
               <li onclick="display_toggle_block_adminState('Boudaries')">Boudaries</li>
               <ul class="side_menu_optin_block, side_menu_cat3" id="Boudaries">
-                <li> <input type="checkbox"  id=" StateBoundary"> <label for=" StateBoundary" > State Boundary</label></li>
-                <li> <input type="checkbox" id="DistrictBoundary"> <label for="DistrictBoundary">District Boundary</label> </li>
-                <li> <input type="checkbox" id="TalukaBoundary"> <label for="TalukaBoundary"> Taluka Boundary</label></li>
-                <li> <input type="checkbox" id="VillageBoundary"> <label for="VillageBoundary">Village Boundary</label> </li>
-                <li> <input type="checkbox" id="Grampanchayat"> <label for="Grampanchayat"> Grampanchayat</label></li>
+                <li>
+                  <input type="checkbox" id="stateboundary"  >
+                  <label for=" stateboundary"> State Boundary</label>
+                </li>
+                <li>
+                  <input type="checkbox" id="DistrictBoundary">
+                  <label for="DistrictBoundary">District Boundary</label>
+                </li>
+                <li>
+                  <input type="checkbox" id="TalukaBoundary">
+                  <label for="TalukaBoundary"> Taluka Boundary</label>
+                </li>
+                <li>
+                  <input type="checkbox" id="VillageBoundary">
+                  <label for="VillageBoundary">Village Boundary</label>
+                </li>
+                <li>
+                  <input type="checkbox" id="Grampanchayat">
+                  <label for="Grampanchayat"> Grampanchayat</label>
+                </li>
 
               </ul>
               </li>
@@ -229,20 +244,22 @@
           <li class="sidebar_items" onclick="handleZoom('zIn')">
             <span class="material-symbols-outlined">zoom_in</span>
           </li>
-      
+
           <li class="sidebar_items" onclick="handleZoom('zOut')">
             <span class="material-symbols-outlined">zoom_out</span>
           </li>
-      
+
           <li class="sidebar_items" id="home_btn" onclick="handleHome(home_btn)">
             <span class="material-symbols-outlined">home</span>
           </li>
-      
+
           <li class="sidebar_items" onclick="fullscreen_click()">
-            <span class="material-symbols-outlined" id="fullscreen_in" onclick="handleFullscreen('easeIn')">fullscreen</span>
-            <span class="material-symbols-outlined" id="fullscreen_out" onclick="handleFullscreen('easeOut')">Fullscreen_exit</span>
+            <span class="material-symbols-outlined" id="fullscreen_in"
+              onclick="handleFullscreen('easeIn')">fullscreen</span>
+            <span class="material-symbols-outlined" id="fullscreen_out"
+              onclick="handleFullscreen('easeOut')">Fullscreen_exit</span>
           </li>
-      
+
           <!-- <li class="sidebar_items" onclick="display_toggle('edit_tool')">
             <span class="material-symbols-outlined">edit</span>
             <ul id="edit_tool" class="sub-menu">
@@ -257,27 +274,28 @@
           <li class="sidebar_items" onclick="display_toggle('edit_tool')">
             <span class="material-symbols-outlined">edit</span>
             <ul id="edit_tool" class="sub-menu">
-              <li onclick="handleMeasure('Point')" ><span class="material-symbols-outlined">radio_button_checked</span></li>
-              <li onclick="handleMeasure('LineString')" ><span class="material-symbols-outlined">timeline</span></li>
-              <li onclick="handleMeasure('Polygon')" ><span class="material-symbols-outlined">hexagon</span></li>
-              <li onclick="handleMeasure('Circle')" ><span class="material-symbols-outlined">circle</span></li>
-              <li onclick="handleMeasure('undo')" ><span class="material-symbols-outlined">undo</span></li>
+              <li onclick="handleMeasure('Point')"><span class="material-symbols-outlined">radio_button_checked</span>
+              </li>
+              <li onclick="handleMeasure('LineString')"><span class="material-symbols-outlined">timeline</span></li>
+              <li onclick="handleMeasure('Polygon')"><span class="material-symbols-outlined">hexagon</span></li>
+              <li onclick="handleMeasure('Circle')"><span class="material-symbols-outlined">circle</span></li>
+              <li onclick="handleMeasure('undo')"><span class="material-symbols-outlined">undo</span></li>
 
             </ul>
           </li>
-      
+
           <li class="sidebar_items" onclick="display_toggle('measure_tool')">
             <span class="material-symbols-outlined">query_stats</span>
             <ul id="measure_tool" class="sub-menu">
-              <li onclick="handleMeasure('LineString')" ><span class="material-symbols-outlined">straighten</span></li>
-              <li onclick="handleMeasure('Polygon')" ><span class="material-symbols-outlined">square_foot</span></li>
-              <li onclick="handleMeasure('clear')" ><span class="material-symbols-outlined">ink_eraser</span></li>
+              <li onclick="handleMeasure('LineString')"><span class="material-symbols-outlined">straighten</span></li>
+              <li onclick="handleMeasure('Polygon')"><span class="material-symbols-outlined">square_foot</span></li>
+              <li onclick="handleMeasure('clear')"><span class="material-symbols-outlined">ink_eraser</span></li>
             </ul>
           </li>
-      
-          <li class="sidebar_items"  onclick="display_toggle_side_Popup('Print_tool')" >
-            <span class="material-symbols-outlined" >print</span>
-            <ul id="Print_tool"  class="side_menu_popup">
+
+          <li class="sidebar_items" onclick="display_toggle_side_Popup('Print_tool')">
+            <span class="material-symbols-outlined">print</span>
+            <ul id="Print_tool" class="side_menu_popup">
               <form id="printform">
                 <label for="format">Page size </label>
                 <select id="format">
@@ -309,8 +327,8 @@
             </ul>
 
           </li>
-          
-          
+
+
           </li>
           <li class="sidebar_items" onclick="display_toggle_side_Popup('layers_tool')">
             <span class="material-symbols-outlined">stacks</span>
@@ -364,40 +382,40 @@
           </li>
 
           <!--  -->
-        
-        <li class="sidebar_items" onclick="display_toggle_side_Popup('boundary_tool')">
-          <span class="material-symbols-outlined">Layers</span>
-          <ul id="boundary_tool" class="side_menu_popup">
 
-            <form id="filterForm">
-              <label for="state">Select State:</label>
-              <select id="state" name="state">
-                <option value="">Select State</option>
-              </select>
-          
-              <label for="district">Select District:</label>
-              <select id="district" name="district">
-                <option value="">Select District</option>
-              </select>
+          <li class="sidebar_items" onclick="display_toggle_side_Popup('boundary_tool')">
+            <span class="material-symbols-outlined">Layers</span>
+            <ul id="boundary_tool" class="side_menu_popup">
 
-            </form>
-            <button id="selectButton"  >Select</button>
+              <form id="filterForm">
+                <label for="state">Select State:</label>
+                <select id="state" name="state">
+                  <option value="">Select State</option>
+                </select>
 
-          </ul>
-        </li>
+                <label for="district">Select District:</label>
+                <select id="district" name="district">
+                  <option value="">Select District</option>
+                </select>
+
+              </form>
+              <button id="selectButton">Select</button>
+
+            </ul>
+          </li>
 
           <!-- Pin Drop -->
           <li class="sidebar_items">
-            <span class="material-symbols-outlined"   onclick="display_toggle_side_Popup('pindrop_tool')">pin_drop</span>
-            <ul id="pindrop_tool"  class="sub-menu, side_menu_popup">
+            <span class="material-symbols-outlined" onclick="display_toggle_side_Popup('pindrop_tool')">pin_drop</span>
+            <ul id="pindrop_tool" class="sub-menu, side_menu_popup">
               <form class="form">
                 <label for="format">Enter Longitude </label>
-               <input type="text" id="lon" placeholder="Longitude" value="">
+                <input type="text" id="lon" placeholder="Longitude" value="">
                 <label for="resolution">Enter Latitude </label>
-                <input type="text" id="lat" placeholder="Latitude" >
+                <input type="text" id="lat" placeholder="Latitude">
               </form>
-              <button id="locate_Pindrop"  >Pindrop</button>
-              <button id="locate_Pinremove" >Remove</button>
+              <button id="locate_Pindrop">Pindrop</button>
+              <button id="locate_Pinremove">Remove</button>
             </ul>
           </li>
           <!-- Pin Drop -->
@@ -438,19 +456,19 @@
         <option value="EPSG:3857">Spherical Mercator (EPSG:3857)</option>
         <option value="EPSG:4326" selected>WGS 84 (EPSG:4326)</option>
       </select> -->
-      <div class="scaleLine"></div>
+    <div class="scaleLine"></div>
 
   </div>
 
 
 
   <footer>
-    <div >
+    <div>
       <div id="long_lat">
         <p>Lat/Long :</p>
         <!-- <input type="text" id="lonlat"> -->
-        <div   id="lonlat_display"></div>
-        
+        <div id="lonlat_display"></div>
+
       </div>
       <div id="org_info">
         <p> designed and Developed by ASSAC. &copy; 2024</p>
@@ -467,10 +485,9 @@
 
   </div>
 
-  <script type="module" src="./main.js"></script>
+  <script type="module" src="./main.js" ></script>
 
   <script src="./custom.js"></script>
-
 
 </body>
 

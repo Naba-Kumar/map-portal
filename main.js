@@ -615,16 +615,6 @@ map.addControl(mousePos);
 
 
 // Create a vector source for the state layer
-const stateVectorSource = new VectorSource({
-  url: './india_state_geo.json', // Replace with your state data URL
-  format: new GeoJSON()
-});
-
-// Create a vector source for the district layer
-const districtVectorSource = new VectorSource({
-  url: './india_Districts.geojson', // Replace with your district data URL
-  format: new GeoJSON()
-});
 
 document.getElementById('selectButton').addEventListener('click', function () {
   const selectedState = document.getElementById('state').value;
@@ -635,6 +625,16 @@ document.getElementById('selectButton').addEventListener('click', function () {
   console.log("Selected District:", selectedDistrict);
   // You can perform any further processing or actions here
 
+  const stateVectorSource = new VectorSource({
+    url: './india_state_geo.json', // Replace with your state data URL
+    format: new GeoJSON()
+  });
+
+  // Create a vector source for the district layer
+  const districtVectorSource = new VectorSource({
+    url: './india_Districts.geojson', // Replace with your district data URL
+    format: new GeoJSON()
+  });
   // Function to create a filter based on state name (adjust property name if needed)
   function getStateFilter(selected, category) {
     return function (feature) {
@@ -713,34 +713,120 @@ document.getElementById('selectButton').addEventListener('click', function () {
 
 // admin states
 // state boundary
-let StateBoundaryCheck = document.getElementById("StateBoundary");
-// Add event listener to listen for changes in checkbox status
-StateBoundaryCheck.addEventListener('click', function() {
-  console.log("hii");
-  // Check if the checkbox is checked
-  if (StateBoundaryCheck.checked) {
-    console.log("Checkbox is checked");
-    // Your main logic here
-    // You can perform any further processing or actions here
+
+
+const atatecheckbox = document.getElementById('stateboundary');
+
+atatecheckbox.addEventListener('change', function () {
+  // Get the existing state layer if it exists
+  const existingStateLayer = map.getLayers().getArray().find(layer => layer.get('name') === 'stateLayer');
+
+  if (atatecheckbox.checked) {
+    // Create a vector source for the state layer
+    const stateVectorSource = new VectorSource({
+      url: './assam_boundary.geojson', // Replace with your state data URL
+      format: new GeoJSON()
+    });
+
+    const selectedState = 'assam';
 
     // Function to create a filter based on state name (adjust property name if needed)
     function getStateFilter(selected) {
-      return function (feature) {  
-          return feature.get('NAME_1').toLowerCase() === selected.toLowerCase(); // Modify property name based on your data
+      return function (feature) {
+        return feature.get('Name').toLowerCase() === selected.toLowerCase(); // Modify property name based on your data
       };
     }
 
     // Apply the filter to the source based on selected state
     stateVectorSource.once('change', function () {
       stateVectorSource.getFeatures().forEach(function (feature) {
-        if (!getStateFilter('assam')(feature)) {
+        if (!getStateFilter(selectedState)(feature)) {
           stateVectorSource.removeFeature(feature);
         }
       });
     });
 
+    // Create a state vector layer with the filtered source
+    const stateLayer = new VectorLayer({
+      source: stateVectorSource,
+      style: new Style({
+        stroke: new Stroke({
+          color: '#000',
+          lineCap: 'butt',
+          width: 1
+        }),
+      })
+    });
+
+    stateLayer.set('name', 'stateLayer');
+
+    // Add the layer to the map
+    map.addLayer(stateLayer);
   } else {
-    console.log("Checkbox is not checked");
+    // If the checkbox is unchecked, remove the existing state layer if it exists
+    if (existingStateLayer) {
+      map.removeLayer(existingStateLayer);
+    }
   }
-})
+});
+
+
+// District boundary
+
+const districtcheckbox = document.getElementById('DistrictBoundary');
+
+districtcheckbox.addEventListener('change', function () {
+    // Get the existing state layer if it exists
+    const existingDistrictLayer = map.getLayers().getArray().find(layer => layer.get('name') === 'districtLayer');
+
+    if (districtcheckbox.checked) {
+        // Create a vector source for the state layer
+        const districtVectorSource = new VectorSource({
+            url: './assam_dist_json.geojson', // Replace with your state data URL
+            format: new GeoJSON()
+        });
+
+        const selectedState = 'assam';
+
+        // Function to create a filter based on state name (adjust property name if needed)
+        function getStateFilter(selected) {
+            return function (feature) {
+                return feature.get('statename').toLowerCase() === selected.toLowerCase(); // Modify property name based on your data
+            };
+        }
+
+        // Apply the filter to the source based on selected state
+        districtVectorSource.once('change', function () {
+            districtVectorSource.getFeatures().forEach(function (feature) {
+                if (!getStateFilter(selectedState)(feature)) {
+                    districtVectorSource.removeFeature(feature);
+                }
+            });
+        });
+
+        // Create a state vector layer with the filtered source
+        const districtLayer = new VectorLayer({
+            source: districtVectorSource,
+            style: new Style({
+                stroke: new Stroke({
+                    color: '#a0a',
+                    lineCap: 'butt',
+                    width: 1
+                }),
+            })
+        });
+
+        districtLayer.set('name', 'districtLayer');
+
+        // Add the layer to the map
+        map.addLayer(districtLayer);
+    } else {
+        // If the checkbox is unchecked, remove the existing state layer if it exists
+        if (existingDistrictLayer) {
+            map.removeLayer(existingDistrictLayer);
+        }
+    }
+});
+
+
 

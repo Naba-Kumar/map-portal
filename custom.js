@@ -199,3 +199,14 @@ document.getElementById("state").addEventListener("change", populateDistricts);
 
 // Populate states when the page loads
 populateStates();
+
+
+
+const checkbox = document.getElementById("stateboundary");
+checkbox.addEventListener('change', function(event) {
+  // console.log(checkbox.addEventListener);
+  console.log("Checkbox evnt listner");
+});
+
+
+
