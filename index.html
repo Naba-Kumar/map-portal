@@ -18,17 +18,17 @@
   <link rel="stylesheet" href="./style.css">
   <link rel="stylesheet" href="./sidebar.css">
   <link rel="stylesheet" href="./mediaStyle.css">
-  <title>Using OpenLayers with Vite</title>
+  <title>Assam Map Portal</title>
 </head>
 
 <body id="body">
-
-
-
+  
+  
+  
   <div class="container">
     <nav id="nav_bar">
-
-
+      
+      
       <button type="button" class="menu_sidebar_container-toggle">
         <div id="menu_open" class="material-symbols-outlined">menu</div>
         <div id="menu_close" class="material-symbols-outlined">menu_open</div>
@@ -38,15 +38,15 @@
       </div>
       <div id="nav_title">
         <h2>ASSAM STATE SPACE APPLICATION CENTER</h2>
-
+        
       </div>
     </nav>
-
+    
     <div class="menu_sidebar_container">
-
-
+      
+      
       <nav class="menu">
-
+        
         <ul class="side_menu_cat1">
           <div class="side_menu_container_optins">
 
@@ -78,7 +78,7 @@
 
               </ul>
               </li>
-
+              
               <li onclick="display_toggle_block_adminState('Transport')">Transport</li>
               <ul class="side_menu_optin_block, side_menu_cat3" id="Transport">
                 <li> <input type="checkbox"> State Highway</li>
@@ -86,16 +86,16 @@
                 <li> <input type="checkbox"> Major State Highway</li>
                 <li> <input type="checkbox"> Major State Highway</li>
               </ul>
-              </li>
+            </li>
 
-              <li onclick="display_toggle_block_adminState('Forest')">Forest</li>
-              <ul class="side_menu_optin_block, side_menu_cat3" id="Forest">
+            <li onclick="display_toggle_block_adminState('Forest')">Forest</li>
+            <ul class="side_menu_optin_block, side_menu_cat3" id="Forest">
                 <li> <input type="checkbox"> <label for=""> Forest1 </label></li>
                 <li> <input type="checkbox"> <label for=""> Forest2 </label></li>
                 <li> <input type="checkbox"> <label for=""> Forest3 </label></li>
               </ul>
               </li>
-
+              
               <li onclick="display_toggle_block_adminState('Water')">Water</li>
               <ul class="side_menu_optin_block, side_menu_cat3" id="Water">
                 <li> <input type="checkbox"> <label for="">w1</label> </li>
@@ -111,7 +111,7 @@
                 <li> <input type="checkbox"> <label for="">s3</label> </li>
               </ul>
               </li>
-
+              
 
 
               <li onclick="display_toggle_block_adminState('Electoral')">Electoral</li>
@@ -127,29 +127,29 @@
                 <li> <input type="checkbox"> <label for=""> A2 </label></li>
                 <li> <input type="checkbox"> <label for=""> A3 </label></li>
               </ul>
-              </li>
+            </li>
 
-              <li onclick="display_toggle_block_adminState('Hospital')">Hospital Loaction</li>
-              <ul class="side_menu_optin_block, side_menu_cat3" id="Hospital">
-                <li> <input type="checkbox"> <label for=""> District Hospital </label></li>
-                <li> <input type="checkbox"> <label for=""> Government Hospital </label></li>
-                <li> <input type="checkbox"> <label for=""> Institute </label></li>
-                <li> <input type="checkbox"> <label for=""> Primary Health Center </label></li>
-                <li> <input type="checkbox"> <label for=""> Rural Hospital </label></li>
-                <li> <input type="checkbox"> <label for=""> Ridgecrest Regional Hospital </label></li>
-                <li> <input type="checkbox"> <label for=""> Subdistrict Hospital 50 </label></li>
+            <li onclick="display_toggle_block_adminState('Hospital')">Hospital Loaction</li>
+            <ul class="side_menu_optin_block, side_menu_cat3" id="Hospital">
+              <li> <input type="checkbox"> <label for=""> District Hospital </label></li>
+              <li> <input type="checkbox"> <label for=""> Government Hospital </label></li>
+              <li> <input type="checkbox"> <label for=""> Institute </label></li>
+              <li> <input type="checkbox"> <label for=""> Primary Health Center </label></li>
+              <li> <input type="checkbox"> <label for=""> Rural Hospital </label></li>
+              <li> <input type="checkbox"> <label for=""> Ridgecrest Regional Hospital </label></li>
+              <li> <input type="checkbox"> <label for=""> Subdistrict Hospital 50 </label></li>
                 <li> <input type="checkbox"> <label for=""> Subdistrict Hospital 100 </label></li>
                 <li> <input type="checkbox"> <label for=""> Trauma Care Unit </label></li>
                 <li> <input type="checkbox"> <label for=""> Urban Community Health Center </label></li>
                 <li> <input type="checkbox"> <label for=""> Urban Primary Health Center </label></li>
                 <li> <input type="checkbox"> <label for=""> Women Hospital </label></li>
-
-
-
-
+                
+                
+                
+                
               </ul>
               </li>
-
+              
               <li onclick="display_toggle_block_adminState('School')">School</li>
               <ul class="side_menu_optin_block, side_menu_cat3" id="School">
                 <li> <input type="checkbox"> <label for=""> School1 </label></li>
@@ -157,7 +157,7 @@
                 <li> <input type="checkbox"> <label for=""> School3 </label></li>
               </ul>
               </li>
-
+              
               <li onclick="display_toggle_block_adminState('MIDC')">MIDC Location</li>
               <ul class="side_menu_optin_block, side_menu_cat3" id="MIDC">
                 <li> <input type="checkbox"> <label for=""> MIDC1 </label></li>
@@ -165,7 +165,7 @@
                 <li> <input type="checkbox"> <label for=""> MIDC3 </label></li>
               </ul>
               </li>
-
+              
               <li onclick="display_toggle_block_adminState('Warehouse')">Warehouse Location</li>
               <ul class="side_menu_optin_block, side_menu_cat3" id="Warehouse">
                 <li> <input type="checkbox"> <label for=""> Warehouse1 </label></li>
@@ -173,7 +173,7 @@
                 <li> <input type="checkbox"> <label for=""> Warehouse3 </label></li>
               </ul>
               </li>
-
+              
             </ul>
           </div>
           <div class="side_menu_container_optins">
@@ -187,7 +187,7 @@
                 <option value="d4">Udalguri</option>
               </select>
               <br>
-
+              
               <label for="Village">Village:</label>
               <select id="Village" name="Village">
                 <option value="v1">v1</option>
@@ -196,18 +196,17 @@
                 <option value="v4">v3</option>
               </select>
               <br>
-
+              
               <input type="submit" value="submit">
-
+              
             </div>
           </div>
           <div class="side_menu_container_optins">
             <li onclick="display_toggle_block('upload')">Upload</li>
             <div class="side_menu_cat2" id="upload">
-              <label for="">Choose Shapefile</label>
-              <input type="file">
-              <input type="submit" value="submit">
-
+              <label for="shapefileInput">Choose Shapefile</label>
+              <input type="file"  id="shapefileInput" accept=".zip" >
+              <button id="shapefileUpload">Upload</button>
             </div>
           </div>
 
@@ -219,7 +218,7 @@
               <br>
               <input type="submit" value="submit">
             </div>
-
+            
           </div>
 
           <div class="side_menu_container_optins">
@@ -233,7 +232,7 @@
               <input type="submit" value="Swipe">
               <input type="reset" value="Clear">
             </div>
-
+            
           </div>
 
 
@@ -244,23 +243,23 @@
           <li class="sidebar_items" onclick="handleZoom('zIn')">
             <span class="material-symbols-outlined">zoom_in</span>
           </li>
-
+          
           <li class="sidebar_items" onclick="handleZoom('zOut')">
             <span class="material-symbols-outlined">zoom_out</span>
           </li>
-
+          
           <li class="sidebar_items" id="home_btn" onclick="handleHome(home_btn)">
             <span class="material-symbols-outlined">home</span>
           </li>
 
           <li class="sidebar_items" onclick="fullscreen_click()">
             <span class="material-symbols-outlined" id="fullscreen_in"
-              onclick="handleFullscreen('easeIn')">fullscreen</span>
+            onclick="handleFullscreen('easeIn')">fullscreen</span>
             <span class="material-symbols-outlined" id="fullscreen_out"
               onclick="handleFullscreen('easeOut')">Fullscreen_exit</span>
-          </li>
-
-          <!-- <li class="sidebar_items" onclick="display_toggle('edit_tool')">
+            </li>
+            
+            <!-- <li class="sidebar_items" onclick="display_toggle('edit_tool')">
             <span class="material-symbols-outlined">edit</span>
             <ul id="edit_tool" class="sub-menu">
               <li onclick="handleDraw('Point')"><span class="material-symbols-outlined">radio_button_checked</span></li>
@@ -270,7 +269,7 @@
               <li onclick="handleDraw('undo')"><span class="material-symbols-outlined">undo</span></li>
             </ul>
           </li> -->
-
+          
           <li class="sidebar_items" onclick="display_toggle('edit_tool')">
             <span class="material-symbols-outlined">edit</span>
             <ul id="edit_tool" class="sub-menu">
@@ -280,7 +279,7 @@
               <li onclick="handleMeasure('Polygon')"><span class="material-symbols-outlined">hexagon</span></li>
               <li onclick="handleMeasure('Circle')"><span class="material-symbols-outlined">circle</span></li>
               <li onclick="handleMeasure('undo')"><span class="material-symbols-outlined">undo</span></li>
-
+              
             </ul>
           </li>
 
@@ -328,7 +327,7 @@
 
           </li>
 
-
+          
           </li>
           <li class="sidebar_items" onclick="display_toggle_side_Popup('layers_tool')">
             <span class="material-symbols-outlined">stacks</span>
@@ -336,13 +335,13 @@
 
               <div class="inputGroup">
                 <input type="checkbox" id="rivers" name="rivers" value="rivers_pgis"
-                  onchange="handleLayerToggle(event)">
+                onchange="handleLayerToggle(event)">
                 <label for="rivers">rivers</label> <br>
               </div>
 
               <div class="inputGroup">
                 <input type="checkbox" id="india_st" name="india_st" value="india_st_pgis"
-                  onchange="handleLayerToggle(event)">
+                onchange="handleLayerToggle(event)">
                 <label for="india_st">india states</label> <br>
               </div>
 
@@ -353,21 +352,21 @@
 
               <div class="inputGroup">
                 <input type="checkbox" id="base" name="base" value="osmTile" checked
-                  onchange="handleLayerToggle(event)">
+                onchange="handleLayerToggle(event)">
                 <label for="Base">OSM</label> <br>
               </div>
               <div class="inputGroup">
                 <input type="checkbox" id="rivers" name="rivers" value="rivers_pgis"
                   onchange="handleLayerToggle(event)">
-                <label for="rivers">rivers</label> <br>
+                  <label for="rivers">rivers</label> <br>
               </div>
 
               <div class="inputGroup">
                 <input type="checkbox" id="india_st" name="india_st" value="india_st_pgis"
-                  onchange="handleLayerToggle(event)">
+                onchange="handleLayerToggle(event)">
                 <label for="india_st">india states</label> <br>
               </div>
-
+              
               <div class="inputGroup">
                 <input type="checkbox" id="dams" name="dams" value="indian_dams" onchange="handleLayerToggle(event)">
                 <label for="dams">dams</label> <br>
@@ -375,7 +374,7 @@
 
               <div class="inputGroup">
                 <input type="checkbox" id="base" name="base" value="osmTile" checked
-                  onchange="handleLayerToggle(event)">
+                onchange="handleLayerToggle(event)">
                 <label for="Base">OSM</label> <br>
               </div>
             </ul>
@@ -392,15 +391,15 @@
                 <select id="state" name="state">
                   <option value="">Select State</option>
                 </select>
-
+                
                 <label for="district">Select District:</label>
                 <select id="district" name="district">
                   <option value="">Select District</option>
                 </select>
-
+                
               </form>
               <button id="selectButton">Select</button>
-
+              
             </ul>
           </li>
 
@@ -425,14 +424,14 @@
 
           <li class="sidebar_items">
             <span class="material-symbols-outlined">filter_alt</span>
-
+            
           </li>
           <li class="sidebar_items">
             <span class="material-symbols-outlined">info</span>
-
+            
           </li>
         </ul>
-
+        
       </div>
 
     </div>
@@ -461,33 +460,35 @@
   </div>
 
 
-
+  
   <footer>
     <div>
       <div id="long_lat">
         <p>Lat/Long :</p>
         <!-- <input type="text" id="lonlat"> -->
         <div id="lonlat_display"></div>
-
+        
       </div>
       <div id="org_info">
         <p> designed and Developed by ASSAC. &copy; 2024</p>
       </div>
     </div>
   </footer>
-
-
-
-
+  
+  
+  
+  
   <div id="map-view">
     <div id="map"></div>
   </div>
+  
+</div>
 
-  </div>
+<script type="module" src="./main.js" ></script>
 
-  <script type="module" src="./main.js" ></script>
-
-  <script src="./custom.js"></script>
+<!-- <script src="https://unpkg.com/shapefile"></script> -->
+<script src="https://unpkg.com/shapefile@latest"></script> 
+<script src="./custom.js"></script>
 
 </body>
 

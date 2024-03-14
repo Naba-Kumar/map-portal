@@ -506,8 +506,8 @@ map.addLayer(pinLayer);
 
 document.getElementById('locate_Pindrop').addEventListener('click', function () {
   // Get longitude and latitude values from input fields
-  var lon = parseFloat(document.getElementById("lon").value);
-  var lat = parseFloat(document.getElementById("lat").value);
+  let lon = parseFloat(document.getElementById("lon").value);
+  let lat = parseFloat(document.getElementById("lat").value);
 
   // Ensure that lon and lat are valid numbers
   if (isNaN(lon) || isNaN(lat) || lon < -180 || lon > 180 || lat < -90 || lat > 90) {
@@ -520,14 +520,14 @@ document.getElementById('locate_Pindrop').addEventListener('click', function () 
   map.getView().setZoom(10); // Set desired zoom level
 
   // Drop a pin at the specified coordinates
-  var pinFeature = new Feature({
+  let pinFeature = new Feature({
     geometry: new Point(fromLonLat([lon, lat]))
   });
 
   // Add the pin feature to the pin source
   pinSource.addFeature(pinFeature);
 
-  var pinStyle = new Style({
+  let pinStyle = new Style({
     image: new Icon({
       anchor: [0.5, 1],
       src: 'https://openlayers.org/en/v6.13.0/examples/data/icon.png' // URL to the pin icon
@@ -567,7 +567,7 @@ let mousePos = new MousePosition({
     // Simple formatting example (modify based on your library)
     // const formattedCoords = `${coordinate[1]}, ${coordinate[0]}`; // [y], [x] order
 
-    var point = new fromLonLat([coordinate[1], coordinate[0]], projection);
+    let point = new fromLonLat([coordinate[1], coordinate[0]], projection);
 
     let ltdegrees = Math.floor(point[0]);
     let ltminutes = (point[0] - ltdegrees) * 60;
@@ -776,57 +776,126 @@ atatecheckbox.addEventListener('change', function () {
 const districtcheckbox = document.getElementById('DistrictBoundary');
 
 districtcheckbox.addEventListener('change', function () {
-    // Get the existing state layer if it exists
-    const existingDistrictLayer = map.getLayers().getArray().find(layer => layer.get('name') === 'districtLayer');
+  // Get the existing state layer if it exists
+  const existingDistrictLayer = map.getLayers().getArray().find(layer => layer.get('name') === 'districtLayer');
 
-    if (districtcheckbox.checked) {
-        // Create a vector source for the state layer
-        const districtVectorSource = new VectorSource({
-            url: './assam_dist_json.geojson', // Replace with your state data URL
-            format: new GeoJSON()
-        });
+  if (districtcheckbox.checked) {
+    // Create a vector source for the state layer
+    const districtVectorSource = new VectorSource({
+      url: './assam_dist_json.geojson', // Replace with your state data URL
+      format: new GeoJSON()
+    });
 
-        const selectedState = 'assam';
+    const selectedState = 'assam';
 
-        // Function to create a filter based on state name (adjust property name if needed)
-        function getStateFilter(selected) {
-            return function (feature) {
-                return feature.get('statename').toLowerCase() === selected.toLowerCase(); // Modify property name based on your data
-            };
-        }
-
-        // Apply the filter to the source based on selected state
-        districtVectorSource.once('change', function () {
-            districtVectorSource.getFeatures().forEach(function (feature) {
-                if (!getStateFilter(selectedState)(feature)) {
-                    districtVectorSource.removeFeature(feature);
-                }
-            });
-        });
-
-        // Create a state vector layer with the filtered source
-        const districtLayer = new VectorLayer({
-            source: districtVectorSource,
-            style: new Style({
-                stroke: new Stroke({
-                    color: '#a0a',
-                    lineCap: 'butt',
-                    width: 1
-                }),
-            })
-        });
-
-        districtLayer.set('name', 'districtLayer');
-
-        // Add the layer to the map
-        map.addLayer(districtLayer);
-    } else {
-        // If the checkbox is unchecked, remove the existing state layer if it exists
-        if (existingDistrictLayer) {
-            map.removeLayer(existingDistrictLayer);
-        }
+    // Function to create a filter based on state name (adjust property name if needed)
+    function getStateFilter(selected) {
+      return function (feature) {
+        return feature.get('statename').toLowerCase() === selected.toLowerCase(); // Modify property name based on your data
+      };
     }
+
+    // Apply the filter to the source based on selected state
+    districtVectorSource.once('change', function () {
+      districtVectorSource.getFeatures().forEach(function (feature) {
+        if (!getStateFilter(selectedState)(feature)) {
+          districtVectorSource.removeFeature(feature);
+        }
+      });
+    });
+
+    // Create a state vector layer with the filtered source
+    const districtLayer = new VectorLayer({
+      source: districtVectorSource,
+      style: new Style({
+        stroke: new Stroke({
+          color: '#a0a',
+          lineCap: 'butt',
+          width: 1
+        }),
+      })
+    });
+
+    districtLayer.set('name', 'districtLayer');
+
+    // Add the layer to the map
+    map.addLayer(districtLayer);
+  } else {
+    // If the checkbox is unchecked, remove the existing state layer if it exists
+    if (existingDistrictLayer) {
+      map.removeLayer(existingDistrictLayer);
+    }
+  }
 });
 
+
+// ---Upload
+
+let uploadBtn = document.getElementById("shapefileUpload");
+
+uploadBtn.addEventListener('click', function () {
+  var fileInput = document.getElementById('shapefileInput');
+  var file = fileInput.files[0];
+
+  if (!file) {
+    alert("Please select a file to upload.");
+    return;
+  }
+
+  var reader = new FileReader();
+  reader.onload = function (event) {
+    var data = event.target.result;
+    loadShapefile(data);
+  };
+  reader.readAsArrayBuffer(file);
+});
+
+// Function to load and display shapefile
+// Function to load and display shapefile
+// Function to load and display shapefile
+// Function to load and display shapefile
+function loadShapefile(data) {
+  try {
+    shapefile.open(data)
+    console.log(data)
+      .then(source => {
+        function parse(data) {
+          
+          if (data.done) {
+            console.log('Shapefile parsing completed.');
+            return;
+          }
+
+          try {
+            var feature = new GeoJSON().readFeature(data.value, {
+              featureProjection: 'EPSG:3857'
+            });
+
+            var vectorSource = new ol.source.Vector({
+              features: [feature]
+            });
+            var vectorLayer = new ol.layer.Vector({
+              source: vectorSource
+            });
+            map.addLayer(vectorLayer);
+          } catch (error) {
+            console.error('Error processing feature:', error);
+            // Handle the error (e.g., skip feature, display a message)
+          }
+          return source.read().then(parse).catch(() => {
+            console.log('Shapefile parsing completed.');
+          });
+        }
+        return source.read().then(parse);
+      })
+      .catch(error => {
+        console.error(error);
+        alert('Error loading shapefile.');
+      });
+  } catch (error) {
+    console.error(error);
+    alert('Error parsing shapefile.');
+  }
+}
 
 
