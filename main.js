@@ -23,6 +23,8 @@ import GeoJSON from 'ol/format/GeoJSON';
 import Feature from 'ol/Feature.js';
 import Point from 'ol/geom/Point.js';
 import Icon from 'ol/style/Icon.js';
+import XYZ from 'ol/source/XYZ.js';
+
 
 
 import { ScaleLine, defaults as defaultControls } from 'ol/control.js';
@@ -55,8 +57,43 @@ const vector = new VectorLayer({
   },
 });
 
+
+// Define base layers
+var standardLayer = new TileLayer({
+  source: new XYZ({
+    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
+    attributions: ['&copy; <a href="https://www.esri.com/en-us/home">Esri</a>']
+  }),
+  title: 'Standard'
+});
+
+var cycleOSMLayer = new TileLayer({
+  source: new XYZ({
+    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Basemap_v2/MapServer/tile/{z}/{y}/{x}',
+    attributions: ['&copy; <a href="https://www.esri.com/en-us/home">Esri</a>']
+  }),
+  title: 'CycleOSM'
+});
+
+var transportLayer = new TileLayer({
+  source: new XYZ({
+    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Transportation/MapServer/tile/{z}/{y}/{x}',
+    attributions: ['&copy; <a href="https://www.esri.com/en-us/home">Esri</a>']
+  }),
+  title: 'Transport'
+});
+
+var humanitarianLayer = new TileLayer({
+  source: new XYZ({
+    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/Humanitarian/World_Basemap_v2/MapServer/tile/{z}/{y}/{x}',
+    attributions: ['&copy; <a href="https://www.esri.com/en-us/home">Esri</a>']
+  }),
+  title: 'Humanitarian'
+});
+
+
 const map = new Map({
-  layers: [raster, vector],
+  layers: [raster, vector, standardLayer, cycleOSMLayer, transportLayer, humanitarianLayer ],
   target: 'map',
   view: new View({
     center: new fromLonLat([92.07298769282396, 26.213469404852535]),
@@ -831,10 +868,73 @@ districtcheckbox.addEventListener('change', function () {
 
 // ---Upload
 
-let uploadBtn = document.getElementById("shapefileUpload");
+// document.getElementById("csvUpload").addEventListener('click', function () {
+//   var fileInput = document.getElementById('csvInput');
+//   var file = fileInput.files[0];
 
-uploadBtn.addEventListener('click', function () {
-  var fileInput = document.getElementById('shapefileInput');
+//   if (!file) {
+//     alert("Please select a file to upload.");
+//     return;
+//   }
+
+//   var reader = new FileReader();
+//   reader.onload = function (event) {
+//     var data = event.target.result;
+//     processData(data);
+//   };
+//   reader.onerror = function (event) {
+//     console.error("File could not be read! Code " + event.target.error.code);
+//   };
+//   reader.readAsText(file);
+// });
+
+// function processData(data) {
+//   try {
+//     // Split CSV data into lines
+//     var lines = data.split('\n');
+
+//     // Loop through each line (assuming CSV format is "latitude,longitude")
+//     lines.forEach(function(line) {
+//       var values = line.split(',');
+//       console.log(values)
+//       if (values.length === 2) {
+//         var latitude = parseFloat(values[0]);
+//         var longitude = parseFloat(values[1]);
+
+//         // Check if latitude and longitude are valid numbers
+//         if (!isNaN(latitude) && !isNaN(longitude)) {
+//           // Create a marker for each coordinate and add it to the map
+//           var marker = new Feature({
+//             geometry: new ol.geom.Point(fromLonLat([longitude, latitude]))
+//           });
+
+//           var vectorSourceUpload = new VectorSource({
+//             features: [marker]
+//           });
+
+//           var vectorLayerUpload = new VectorLayer({
+//             source: vectorSourceUpload
+//           });
+
+//           map.addLayer(vectorLayerUpload);
+//         } else {
+//           console.error("Invalid latitude or longitude in CSV.");
+//         }
+//       } else {
+//         console.error("Invalid data format in CSV.");
+//       }
+//     });
+//   } catch (error) {
+//     console.error("Error processing CSV:", error);
+//   }
+// }
+
+
+
+
+
+document.getElementById("geojsonUpload").addEventListener('click', function () {
+  var fileInput = document.getElementById('geojsonInput');
   var file = fileInput.files[0];
 
   if (!file) {
@@ -845,57 +945,119 @@ uploadBtn.addEventListener('click', function () {
   var reader = new FileReader();
   reader.onload = function (event) {
     var data = event.target.result;
-    loadShapefile(data);
+    processData(data);
   };
-  reader.readAsArrayBuffer(file);
+  reader.onerror = function (event) {
+    console.error("File could not be read! Code " + event.target.error.code);
+  };
+  reader.readAsText(file);
 });
 
-// Function to load and display shapefile
-// Function to load and display shapefile
-// Function to load and display shapefile
-// Function to load and display shapefile
-function loadShapefile(data) {
+function processData(data) {
   try {
-    shapefile.open(data)
-    console.log(data)
-      .then(source => {
-        function parse(data) {
-          
-          if (data.done) {
-            console.log('Shapefile parsing completed.');
-            return;
-          }
+    var features = JSON.parse(data).features;
 
-          try {
-            var feature = new GeoJSON().readFeature(data.value, {
-              featureProjection: 'EPSG:3857'
-            });
+    if (!features || !Array.isArray(features)) {
+      console.error("Invalid GeoJSON data format.");
+      return;
+    }
 
-            var vectorSource = new ol.source.Vector({
-              features: [feature]
-            });
-            var vectorLayer = new ol.layer.Vector({
-              source: vectorSource
-            });
-            map.addLayer(vectorLayer);
-          } catch (error) {
-            console.error('Error processing feature:', error);
-            // Handle the error (e.g., skip feature, display a message)
-          }
-          return source.read().then(parse).catch(() => {
-            console.log('Shapefile parsing completed.');
+    features.forEach(function (feature) {
+      var geometry = feature.geometry;
+      if (geometry && geometry.type === 'Point' && Array.isArray(geometry.coordinates) && geometry.coordinates.length === 2) {
+        var coordinates = geometry.coordinates;
+        var latitude = coordinates[1];
+        var longitude = coordinates[0];
+
+        if (!isNaN(latitude) && !isNaN(longitude)) {
+          var marker = new Feature({
+            geometry: new Point(fromLonLat([longitude, latitude]))
           });
+
+          var vectorSource = new VectorSource({
+            features: [marker]
+          });
+
+          var vectorLayer = new VectorLayer({
+            source: vectorSource
+          });
+
+          map.addLayer(vectorLayer);
+        } else {
+          console.error("Invalid latitude or longitude in GeoJSON.");
         }
-        return source.read().then(parse);
-      })
-      .catch(error => {
-        console.error(error);
-        alert('Error loading shapefile.');
-      });
+      } else {
+        console.error("Invalid GeoJSON feature format.");
+      }
+    });
   } catch (error) {
-    console.error(error);
-    alert('Error parsing shapefile.');
+    console.error("Error processing GeoJSON:", error);
   }
 }
 
 
+
+// ------------
+
+//  Print option-----------
+
+
+// document.getElementById("export-pdf").addEventListener("click", function() {
+//   var format = document.getElementById("format").value;
+//   var resolution = parseInt(document.getElementById("resolution").value);
+//   var scale = parseInt(document.getElementById("scale").value);
+
+//   let printop = new PrintControl;
+//   map.addControl(printop)
+
+//   // Make sure ol-ext has been loaded
+//   if (1) {
+//     // Define print options
+//     var options = {
+//       layout: format,
+//       dpi: resolution,
+//       scale: scale
+//     };
+
+//     // Print the map
+//     printop.print(options);
+//   } else {
+//     console.error('ol-ext library is not loaded.');
+//   }
+// });
+
+
+
+// Create the map
+// var map = new ol.Map({
+//   target: 'map',
+//   layers: [standardLayer, cycleOSMLayer, transportLayer, humanitarianLayer],
+//   view: new ol.View({
+//     center: ol.proj.fromLonLat([0, 0]),
+//     zoom: 2
+//   })
+// });
+
+// handletoggleLayer
+
+// Define the toggleLayer function to switch between layers
+function toggleLayer(layerName) {
+  var layers = map.getLayers().getArray();
+  layers.forEach(function(layer) {
+      if (layer.get('name') === layerName) {
+          layer.setVisible(true);
+      } else {
+          layer.setVisible(false);
+      }
+  });
+}
+
+window.handletoggleLayer = function (layerName) {
+  toggleLayer(layerName);
+};
+
+// Layer switcher configuration
+var layerSwitcher = new LayerSwitcher({
+  tipLabel: 'Legend' // Optional label for button
+});
+map.addControl(layerSwitcher);

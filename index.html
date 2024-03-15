@@ -204,9 +204,9 @@
           <div class="side_menu_container_optins">
             <li onclick="display_toggle_block('upload')">Upload</li>
             <div class="side_menu_cat2" id="upload">
-              <label for="shapefileInput">Choose Shapefile</label>
-              <input type="file"  id="shapefileInput" accept=".zip" >
-              <button id="shapefileUpload">Upload</button>
+              <label for="csvInput">Choose <span style="color: red;"> .GeoJSON</span> </label>
+              <input type="file"  id="geojsonInput" accept=".Geojson" >
+              <button id="geojsonUpload">Upload</button>
             </div>
           </div>
 
@@ -430,6 +430,13 @@
             <span class="material-symbols-outlined">info</span>
             
           </li>
+
+          <li class="sidebar_items">
+            <span class="material-symbols-outlined">clear_all</span>
+            
+          </li>
+
+
         </ul>
         
       </div>
@@ -438,13 +445,15 @@
   </div>
 
   <div id="base_layer_container">
-    <div id="base_layer_container_icon" onclick="display_toggle_side_Popup('base_layer_menu')"></div>
+    <div id="base_layer_container_icon" ></div>
     <div id="base_layer_menu">
-      <ul id="base_layer_list">
-        <li> <label for="">Standard</label> <img src="./modules/standardmapimg.jpeg" alt=""> </li>
-        <li> <label for="">CycleOSM</label> <img src="./modules/osmmapimg.png" alt=""> </li>
-        <li> <label for="">Transport</label> <img src="./modules/streetmapimg.avif" alt=""> </li>
-        <li> <label for="">Humanitarian</label> <img src="./modules/humanEmapimg.png" alt=""> </li>
+      <ul id="base_layer_list" class=".side_menu_popup">
+        <ul id="base_layer_list">
+          <li onclick="handletoggleLayer('Standard')"> <label for="">Standard</label> <img src="./modules/standardmapimg.jpeg" alt=""> </li>
+          <li onclick="handletoggleLayer('CycleOSM')"> <label for="">CycleOSM</label> <img src="./modules/osmmapimg.png" alt=""> </li>
+          <li onclick="handletoggleLayer('Transport')"> <label for="">Transport</label> <img src="./modules/streetmapimg.avif" alt=""> </li>
+          <li onclick="handletoggleLayer('Humanitarian')"> <label for="">Humanitarian</label> <img src="./modules/humanEmapimg.png" alt=""> </li>
+        </ul>
       </ul>
     </div>
   </div>
@@ -486,8 +495,6 @@
 
 <script type="module" src="./main.js" ></script>
 
-<!-- <script src="https://unpkg.com/shapefile"></script> -->
-<script src="https://unpkg.com/shapefile@latest"></script> 
 <script src="./custom.js"></script>
 
 </body>

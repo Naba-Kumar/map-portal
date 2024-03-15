@@ -227,7 +227,7 @@ ul{
 
     display: none;
 
-    font-size: 16px;
+    font-size: 15px;
     padding: 10px;
     margin-bottom: 7px;
     cursor: pointer;
@@ -297,7 +297,7 @@ ul{
 
 }
 
-.side_menu_container_optins div input[type="submit"] {
+.side_menu_container_optins div input[type="submit"], button {
     margin: 10px;
     background-color: #03822b;
     border-radius: 6px;
@@ -306,6 +306,16 @@ ul{
     cursor: pointer;
 
   }
+
+  .side_menu_container_optins div  button {
+    padding: 7px;
+    margin-left: 10px;
+
+
+
+  }
+
+
   .side_menu_container_optins div input[type="reset"] {
     margin: 10px;
     background-color: #961717;
@@ -409,6 +419,10 @@ ul{
     display: block;
 }
 
+
+
+
+
 #Print_tool select {
     width: 90%;
     border-radius: 3px;
@@ -433,7 +447,7 @@ ul{
     background-color: #a4e7d1;
     padding: 10px;
     overflow: hidden;
-
+    
 }
 
 #layers_tool.show{
@@ -445,24 +459,24 @@ select {
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
-  }
-  
-  select:dir(rtl) {
+}
+
+select:dir(rtl) {
     padding-right: 30px; /* Adjust as needed for arrow width */
-  }
-  
-  select:dir(ltr) {
+}
+
+select:dir(ltr) {
     padding-left: 30px; /* Adjust as needed for arrow width */
-  }
-  
-  /* Position the arrow */
-  select:after {
+}
+
+/* Position the arrow */
+select:after {
     content: '\25BC';
     position: absolute;
     right: 10px;
     top: calc(50% - 0.5em); /* Adjust vertically to center */
-  }
-  
+}
+
 
 #boundary_tool{
     position: absolute;
@@ -476,7 +490,7 @@ select {
     overflow: hidden;
     /* border: 1px solid  #00625A; */
     /* border-radius: 8px; */
-
+    
 }
 
 #boundary_tool select{
@@ -512,7 +526,7 @@ select {
     background-color: #a4e7d1;
     padding: 10px;
     width: 180px;
-
+    
 }
 
 #pindrop_tool input {
@@ -553,17 +567,17 @@ footer {
     align-items: center;
     justify-content: center;
     z-index: 3;
-   
+    
 }
 footer div{
-   
+    
     display: flex;
     flex-direction: row;
     justify-content: center;
     margin: 3px 17px;
     font-size: 14px;
- 
-
+    
+    
 }
 footer  #lonlat_display{
     margin: 0;
@@ -582,7 +596,7 @@ footer  #lonlat_display{
     right: 25px;
     z-index: 3;
     border-radius: 8px;
-   
+    
 }
 #base_layer_container #base_layer_container_icon{
     height:80px;
@@ -590,7 +604,7 @@ footer  #lonlat_display{
     border: 5px solid #023C40;
     background: url('./modules/mapp.jpg');
     border-radius: 10px;
-   
+    
 }
 
 #base_layer_container #base_layer_menu{
@@ -604,6 +618,9 @@ footer  #lonlat_display{
     display: none;
 }
 
+#base_layer_container #base_layer_menu.show{
+    display: block;
+}
 #base_layer_container #base_layer_menu li{
     font-size: 14px;
     padding: 10px;

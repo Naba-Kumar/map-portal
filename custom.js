@@ -140,9 +140,32 @@ function display_toggle_side_Popup(id) {
     }
   });
 
-  // Toggle the clicked sub-menu's visibility
+  // Toggle the clicked baselayer-menu's visibility
   clickedSubMenu.classList.toggle('show'); // Toggle display
 }
+
+
+
+
+// Function to toggle the display of the ul
+
+document.addEventListener("DOMContentLoaded", function () {
+  const baseLayerContainer = document.getElementById("base_layer_container");
+  const baseLayerList = document.getElementById("base_layer_menu");
+  const baseLayerIcon = document.getElementById("base_layer_container_icon");
+
+  // Toggle the display of the base layer list when the icon is clicked
+  baseLayerIcon.addEventListener("click", function () {
+      baseLayerList.classList.toggle("show");
+  });
+
+  // Hide the base layer list when clicking outside of it
+  document.addEventListener("click", function (event) {
+      if (!baseLayerContainer.contains(event.target)) {
+          baseLayerList.classList.remove("show");
+      }
+  });
+});
 
 
 

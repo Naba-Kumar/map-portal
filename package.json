@@ -12,6 +12,7 @@
   "dependencies": {
     "all": "^0.0.0",
     "ol": "latest",
+    "ol-ext": "^4.0.17",
     "ol-layerswitcher": "^4.1.1"
   }
 }
