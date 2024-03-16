@@ -19,7 +19,7 @@ ul{
     height: 42px;
 }
 
-.ol-tooltip {
+/* .ol-tooltip {
     position: relative;
     background: rgba(0, 0, 0, 0.5);
     border-radius: 4px;
@@ -29,7 +29,7 @@ ul{
     white-space: nowrap;
     font-size: 12px;
     cursor: default;
-    /* user-select: none; */
+    user-select: none;
   }
   .ol-tooltip-measure {
     opacity: 1;
@@ -53,7 +53,7 @@ ul{
   }
   .ol-tooltip-static:before {
     border-top-color: #ffcc33;
-  }
+  } */
 
 #logo img{
     position: absolute;
@@ -169,10 +169,16 @@ ul{
 
 #menu_open{
     display: block;
+    position: absolute;
+    top: 8px;
+    left: 6px
 }
 
 #menu_close{
     display: none;
+    position: absolute;
+    top: 8px;
+    left: 6px
 }
 
 
@@ -608,7 +614,7 @@ footer  #lonlat_display{
 }
 
 #base_layer_container #base_layer_menu{
-    background-color: #e1ffff;
+    background-color: #a4e7d1;
     position: absolute;
     top: 0;
     right: 100px;
@@ -646,23 +652,35 @@ footer  #lonlat_display{
 }
 
 #base_layer_menu li:hover{
-    background-color: #c2ffff;
-    border-radius: 8px;
+    background-color: #c0f3e0;
 }
 
-#mesure_scale{
+#base_layer_menu li.active{
+    background-color: #00625A;
+    color: #fff;
+}
+
+
+
+
+
+
+
+
+/* .scaleLine{
     position: absolute;
-    bottom: 70px;
-    right: 20px;
-    z-index: 3;
-    background-color: #853131;
-    height: 30px;
-    width: 100px;
-}
-
-
-
-
-.scaleLine{
+    bottom: 100px;
+    right: 100px;
     z-index: 4
+    
+} */
+
+.scale-line-control {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    background-color: rgba(255, 255, 255, 0.5);
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 12px;
 }

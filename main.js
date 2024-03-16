@@ -24,20 +24,16 @@ import Feature from 'ol/Feature.js';
 import Point from 'ol/geom/Point.js';
 import Icon from 'ol/style/Icon.js';
 import XYZ from 'ol/source/XYZ.js';
+// import { Geocoder } from 'ol-geocoder;
 
 
-
-import { ScaleLine, defaults as defaultControls } from 'ol/control.js';
-import {
-  getPointResolution,
-  get as getProjection,
-  transform,
-} from 'ol/proj.js';
 
 
 
 const raster = new TileLayer({
   source: new OSM(),
+  title:'raster',
+  name:'raster'
 });
 
 
@@ -64,15 +60,21 @@ var standardLayer = new TileLayer({
     url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
     attributions: ['&copy; <a href="https://www.esri.com/en-us/home">Esri</a>']
   }),
-  title: 'Standard'
+  title: 'Standard',
+  visible:false,
+  name:'standardLayer'
 });
 
-var cycleOSMLayer = new TileLayer({
+var satelite = new TileLayer({
   source: new XYZ({
-    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Basemap_v2/MapServer/tile/{z}/{y}/{x}',
+    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
     attributions: ['&copy; <a href="https://www.esri.com/en-us/home">Esri</a>']
   }),
-  title: 'CycleOSM'
+  title: 'satelite',
+  visible:false,
+  name: 'satelite'
+
+
 });
 
 var transportLayer = new TileLayer({
@@ -80,20 +82,17 @@ var transportLayer = new TileLayer({
     url: 'https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Transportation/MapServer/tile/{z}/{y}/{x}',
     attributions: ['&copy; <a href="https://www.esri.com/en-us/home">Esri</a>']
   }),
-  title: 'Transport'
+  title: 'Transport',
+  visible:false,
+  name: 'transportLayer'
+
 });
 
-var humanitarianLayer = new TileLayer({
-  source: new XYZ({
-    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/Humanitarian/World_Basemap_v2/MapServer/tile/{z}/{y}/{x}',
-    attributions: ['&copy; <a href="https://www.esri.com/en-us/home">Esri</a>']
-  }),
-  title: 'Humanitarian'
-});
+
 
 
 const map = new Map({
-  layers: [raster, vector, standardLayer, cycleOSMLayer, transportLayer, humanitarianLayer ],
+  layers: [raster, vector, standardLayer, satelite, transportLayer ],
   target: 'map',
   view: new View({
     center: new fromLonLat([92.07298769282396, 26.213469404852535]),
@@ -103,10 +102,18 @@ const map = new Map({
   keyboardEventTarget: document
 });
 
-let scaleLineControl = new ScaleLine({
-  className: "scaleLine",
-});
-map.addControl(scaleLineControl);
+// let scaleLineControl = new ScaleLine({
+//   className: "scaleLine",
+//   bar:true,
+//   // minWidth:1500,
+//   maxWidth:140,
+//   units: 'metric',
+//   steps:6,
+//   text:true,
+//   target:'scale-line-control',
+//   // target: document.getElementById('scale-line-control') // Optional target element to render the scale line
+// });
+// map.addControl(scaleLineControl);
 
 //Custom Home Click functionality Starts....
 
@@ -1041,9 +1048,10 @@ function processData(data) {
 // handletoggleLayer
 
 // Define the toggleLayer function to switch between layers
+
 function toggleLayer(layerName) {
   var layers = map.getLayers().getArray();
-  layers.forEach(function(layer) {
+  layers.forEach(function (layer) {
       if (layer.get('name') === layerName) {
           layer.setVisible(true);
       } else {
@@ -1057,7 +1065,21 @@ window.handletoggleLayer = function (layerName) {
 };
 
 // Layer switcher configuration
-var layerSwitcher = new LayerSwitcher({
+var layerSwitcher = new ol.control.LayerSwitcher({
   tipLabel: 'Legend' // Optional label for button
 });
 map.addControl(layerSwitcher);
+
+
+var geocoder = new Geocoder('nominatim', {
+  provider: 'osm',
+  lang: 'en-US', // 'en-US' is the default, set as appropriate
+  placeholder: 'Search for an address',
+  limit: 5,
+  debug: false,
+  autoComplete: true,
+  keepOpen: true
+});
+
+// Add Geocoder control to the map
+map.addControl(geocoder);

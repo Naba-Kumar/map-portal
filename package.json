@@ -13,6 +13,7 @@
     "all": "^0.0.0",
     "ol": "latest",
     "ol-ext": "^4.0.17",
+    "ol-geocoder": "^4.3.3",
     "ol-layerswitcher": "^4.1.1"
   }
 }

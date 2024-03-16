@@ -232,4 +232,16 @@ checkbox.addEventListener('change', function(event) {
 });
 
 
+// Function to activate menu option
+function activateOption(element) {
+  var menuItems = document.querySelectorAll('#base_layer_menu li');
+  
+  // Remove 'active' class from all menu items
+  menuItems.forEach(function(item) {
+      item.classList.remove('active');
+  });
+
+  // Add 'active' class to the clicked menu item
+  element.classList.add('active');
+}
 
