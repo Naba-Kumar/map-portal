@@ -18,6 +18,7 @@
   <link rel="stylesheet" href="./style.css">
   <link rel="stylesheet" href="./sidebar.css">
   <link rel="stylesheet" href="./mediaStyle.css">
+  
   <title>Assam Map Portal</title>
 </head>
 
@@ -204,23 +205,13 @@
           <div class="side_menu_container_optins">
             <li onclick="display_toggle_block('upload')">Upload</li>
             <div class="side_menu_cat2" id="upload">
-              <label for="csvInput">Choose <span style="color: red;"> .GeoJSON</span> </label>
-              <input type="file"  id="geojsonInput" accept=".Geojson" >
-              <button id="geojsonUpload">Upload</button>
+              <label for="fileInput">Choose <span style="color: red; font-size: .9em;"> .GeoJSON or .csv</span> </label>
+              <input type="file"  id="fileInput" accept=".Geojson, .csv, .zip" >
+              <button id="uploadButton">Upload</button>
             </div>
           </div>
 
-          <div class="side_menu_container_optins">
-            <li onclick="display_toggle_block('geocode')">Geocode Locator</li>
-            <div class="select-container, side_menu_cat2" id="geocode">
-              <label for="Search_area">Search : </label>
-              <input type="text" placeholder="Find Address or Place">
-              <br>
-              <input type="submit" value="submit">
-            </div>
-            
-          </div>
-
+          
           <div class="side_menu_container_optins">
             <li onclick="display_toggle_block('Swipe')">Swipe Tool</li>
             <div class="select-container, side_menu_cat2" id="Swipe">
@@ -234,7 +225,20 @@
             </div>
             
           </div>
-
+          
+          <div class="side_menu_container_optins">
+            <li onclick="display_toggle_block('geocode')">Geocode Locator</li>
+            <div class="select-container, side_menu_cat2" id="geocode">
+              <label for="Search_area">Search : </label>
+              <input type="text" id="locationInput" placeholder="Enter location name">
+              <br>
+              <button id="searchButton" value="submit">Search</button>
+              <div id="resultContainer" class="result-container">
+                <!-- Results will be displayed here -->
+            </div>
+            </div>
+            
+          </div>
 
         </ul>
       </nav>

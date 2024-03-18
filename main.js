@@ -24,16 +24,16 @@ import Feature from 'ol/Feature.js';
 import Point from 'ol/geom/Point.js';
 import Icon from 'ol/style/Icon.js';
 import XYZ from 'ol/source/XYZ.js';
-// import { Geocoder } from 'ol-geocoder;
-
+import axios from 'axios';
+import Papa from 'papaparse';
 
 
 
 
 const raster = new TileLayer({
   source: new OSM(),
-  title:'raster',
-  name:'raster'
+  title: 'raster',
+  name: 'raster'
 });
 
 
@@ -61,8 +61,8 @@ var standardLayer = new TileLayer({
     attributions: ['&copy; <a href="https://www.esri.com/en-us/home">Esri</a>']
   }),
   title: 'Standard',
-  visible:false,
-  name:'standardLayer'
+  visible: false,
+  name: 'standardLayer'
 });
 
 var satelite = new TileLayer({
@@ -71,7 +71,7 @@ var satelite = new TileLayer({
     attributions: ['&copy; <a href="https://www.esri.com/en-us/home">Esri</a>']
   }),
   title: 'satelite',
-  visible:false,
+  visible: false,
   name: 'satelite'
 
 
@@ -83,7 +83,7 @@ var transportLayer = new TileLayer({
     attributions: ['&copy; <a href="https://www.esri.com/en-us/home">Esri</a>']
   }),
   title: 'Transport',
-  visible:false,
+  visible: false,
   name: 'transportLayer'
 
 });
@@ -92,7 +92,7 @@ var transportLayer = new TileLayer({
 
 
 const map = new Map({
-  layers: [raster, vector, standardLayer, satelite, transportLayer ],
+  layers: [raster, vector, standardLayer, satelite, transportLayer],
   target: 'map',
   view: new View({
     center: new fromLonLat([92.07298769282396, 26.213469404852535]),
@@ -940,8 +940,8 @@ districtcheckbox.addEventListener('change', function () {
 
 
 
-document.getElementById("geojsonUpload").addEventListener('click', function () {
-  var fileInput = document.getElementById('geojsonInput');
+document.getElementById("uploadButton").addEventListener('click', function () {
+  var fileInput = document.getElementById('fileInput');
   var file = fileInput.files[0];
 
   if (!file) {
@@ -952,7 +952,8 @@ document.getElementById("geojsonUpload").addEventListener('click', function () {
   var reader = new FileReader();
   reader.onload = function (event) {
     var data = event.target.result;
-    processData(data);
+    var extension = file.name.split('.').pop().toLowerCase();
+    processData(data, extension);
   };
   reader.onerror = function (event) {
     console.error("File could not be read! Code " + event.target.error.code);
@@ -960,7 +961,21 @@ document.getElementById("geojsonUpload").addEventListener('click', function () {
   reader.readAsText(file);
 });
 
-function processData(data) {
+function processData(data, extension) {
+  try {
+    if (extension === 'geojson') {
+      visualizeGeoJSON(data);
+    } else if (extension === 'csv') {
+      visualizeCSV(data);
+    } else {
+      console.error("Unsupported file format.");
+    }
+  } catch (error) {
+    console.error("Error processing file:", error);
+  }
+}
+
+function visualizeGeoJSON(data) {
   try {
     var features = JSON.parse(data).features;
 
@@ -999,6 +1014,46 @@ function processData(data) {
     });
   } catch (error) {
     console.error("Error processing GeoJSON:", error);
+  }
+}
+
+
+function visualizeCSV(data) {
+  console.log("csv")
+  try {
+    // Your CSV parsing and visualization logic here
+    // For example, you can use a library like PapaParse for CSV parsing
+
+    new Papa.parse(data, {
+      header: true,
+      complete: function (results) {
+        results.data.forEach(function (row) {
+          // Assuming latitude and longitude columns are named 'latitude' and 'longitude'
+          var latitude = parseFloat(row.latitude);
+          var longitude = parseFloat(row.longitude);
+
+          if (!isNaN(latitude) && !isNaN(longitude)) {
+            var marker = new Feature({
+              geometry: new Point(fromLonLat([longitude, latitude]))
+            });
+
+            var vectorSource = new VectorSource({
+              features: [marker]
+            });
+
+            var vectorLayer = new VectorLayer({
+              source: vectorSource
+            });
+
+            map.addLayer(vectorLayer);
+          } else {
+            console.error("Invalid latitude or longitude in CSV.");
+          }
+        });
+      }
+    });
+  } catch (error) {
+    console.error("Error processing CSV:", error);
   }
 }
 
@@ -1052,11 +1107,11 @@ function processData(data) {
 function toggleLayer(layerName) {
   var layers = map.getLayers().getArray();
   layers.forEach(function (layer) {
-      if (layer.get('name') === layerName) {
-          layer.setVisible(true);
-      } else {
-          layer.setVisible(false);
-      }
+    if (layer.get('name') === layerName) {
+      layer.setVisible(true);
+    } else {
+      layer.setVisible(false);
+    }
   });
 }
 
@@ -1064,22 +1119,151 @@ window.handletoggleLayer = function (layerName) {
   toggleLayer(layerName);
 };
 
-// Layer switcher configuration
-var layerSwitcher = new ol.control.LayerSwitcher({
-  tipLabel: 'Legend' // Optional label for button
+
+// --BAse layer  changes feature end
+
+
+// geo coder
+let geoLocateLat;
+let geoLocateLon;
+
+document.addEventListener('DOMContentLoaded', function () {
+  const locationInput = document.getElementById('locationInput');
+  const resultContainer = document.getElementById('resultContainer');
+
+  // Event listener for input changes
+  locationInput.addEventListener('input', function () {
+    const location = locationInput.value.trim();
+    if (location) {
+      getSuggestions(location);
+    } else {
+      // Clear the result container if the input is empty
+      resultContainer.innerHTML = '';
+    }
+  });
+
+
+  // Function to get suggestions from Nominatim API
+  async function getSuggestions(location) {
+    try {
+      const response = await axios.get(`https://nominatim.openstreetmap.org/search?format=json&q=${location}`);
+      const suggestions = response.data;
+      displaySuggestions(suggestions);
+    } catch (error) {
+      console.error('Error fetching suggestions:', error.message);
+    }
+  }
+
+  // Function to display suggestions in the result container
+  function displaySuggestions(suggestions) {
+    if (suggestions && suggestions.length > 0) {
+      const suggestionHTML = suggestions.map(suggestion => {
+        return `<li class="suggestion-item" data-lat="${suggestion.lat}" data-lon="${suggestion.lon}" data-name="${suggestion.display_name}">${suggestion.display_name}</li>`;
+      }).join('');
+      resultContainer.innerHTML = `<ul>${suggestionHTML}</ul>`;
+      // Add click event listener to each suggestion item
+      const suggestionItems = document.querySelectorAll('.suggestion-item');
+      suggestionItems.forEach(item => {
+        item.addEventListener('click', function () {
+          const name = item.getAttribute('data-name');
+          locationInput.value = name; // Automatically add the selected suggestion to the input field
+          console.log(item)
+          geoLocateLat = item.getAttribute('data-lat');
+          geoLocateLon = item.getAttribute('data-lon');
+          locateLocation(geoLocateLat, geoLocateLon);
+          clearSuggestions(); // Clear suggestions after selecting one
+        });
+      });
+    } else {
+      resultContainer.innerHTML = '<p>No suggestions found.</p>';
+    }
+  }
+
+  // Function to clear suggestions
+  function clearSuggestions() {
+    resultContainer.innerHTML = '';
+  }
+
+  // Function to locate a specific location on the map
+  function locateLocation(lat, lon) {
+    // Here, you can write your code to locate the location on the map
+
+    const geoLocateSource = new VectorSource();
+    const geoLocateLayer = new VectorLayer({
+      source: geoLocateSource
+    });
+
+    // Center the map view to the specified coordinates
+    map.getView().setCenter(new fromLonLat([lon, lat]));
+    map.getView().setZoom(16); // Set desired zoom level
+
+    // Drop a pin at the specified coordinates
+    let geolocateFeature = new Feature({
+      geometry: new Point(fromLonLat([lon, lat]))
+    });
+
+    // Add the pin feature to the pin source
+    geoLocateSource.addFeature(geolocateFeature);
+
+    let pinStyle = new Style({
+      image: new Icon({
+        anchor: [0.5, 1],
+        src: './modules/location.gif' // URL to the pin icon
+      })
+    });
+
+    geolocateFeature.setStyle(pinStyle);
+
+
+
+
+    // For demonstration purposes, I'm logging the latitude and longitude
+    console.log('Locating:', lat, lon);
+    // You can use these coordinates to display the location on the map using OpenLayers or any other mapping library
+  }
 });
-map.addControl(layerSwitcher);
+
+// geo coder
+
+map.addLayer(pinLayer);
+
+document.getElementById('locate_Pindrop').addEventListener('click', function () {
+  // Get longitude and latitude values from input fields
+  let lon = parseFloat(document.getElementById("lon").value);
+  let lat = parseFloat(document.getElementById("lat").value);
 
 
-var geocoder = new Geocoder('nominatim', {
-  provider: 'osm',
-  lang: 'en-US', // 'en-US' is the default, set as appropriate
-  placeholder: 'Search for an address',
-  limit: 5,
-  debug: false,
-  autoComplete: true,
-  keepOpen: true
-});
+  const pinSource = new VectorSource();
+  const pinLayer = new VectorLayer({
+    source: pinSource
+  });
+  // Center the map view to the specified coordinates
+  map.getView().setCenter(new fromLonLat([lon, lat]));
+  map.getView().setZoom(10); // Set desired zoom level
 
-// Add Geocoder control to the map
-map.addControl(geocoder);
+  // Drop a pin at the specified coordinates
+  let pinFeature = new Feature({
+    geometry: new Point(fromLonLat([lon, lat]))
+  });
+
+  // Add the pin feature to the pin source
+  pinSource.addFeature(pinFeature);
+
+  let pinStyle = new Style({
+    image: new Icon({
+      anchor: [0.5, 1],
+      src: 'https://openlayers.org/en/v6.13.0/examples/data/icon.png' // URL to the pin icon
+    })
+  });
+
+  pinFeature.setStyle(pinStyle);
+
+
+})
+
+document.getElementById('locate_Pinremove').addEventListener('click', function () {
+  console.log("remove")
+
+  pinSource.clear(); // Clear all features from the pin source
+
+})
