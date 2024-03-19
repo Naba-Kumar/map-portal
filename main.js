@@ -539,7 +539,6 @@ window.handleDraw = function (event) {
 
 
 
-//Pindrop Locate featue Starts....
 
 // Add an empty vector source to hold pins
 const pinSource = new VectorSource();
@@ -547,6 +546,14 @@ const pinLayer = new VectorLayer({
   source: pinSource
 });
 map.addLayer(pinLayer);
+
+
+
+
+
+
+
+// -------------------------------------------------------------------------------------------------------------------------
 
 document.getElementById('locate_Pindrop').addEventListener('click', function () {
   // Get longitude and latitude values from input fields
@@ -560,6 +567,7 @@ document.getElementById('locate_Pindrop').addEventListener('click', function () 
   }
 
   // Center the map view to the specified coordinates
+  
   map.getView().setCenter(new fromLonLat([lon, lat]));
   map.getView().setZoom(10); // Set desired zoom level
 
@@ -657,100 +665,130 @@ map.addControl(mousePos);
 
 // state dist Layer select tool starts
 
-
+// ---------------------------------------------------------------------------------------------------------------------------------
 // Create a vector source for the state layer
 
 document.getElementById('selectButton').addEventListener('click', function () {
+
+
   const selectedState = document.getElementById('state').value;
   const selectedDistrict = document.getElementById('district').value;
-
-  // Your main logic here
   console.log("Selected State:", selectedState);
   console.log("Selected District:", selectedDistrict);
-  // You can perform any further processing or actions here
 
-  const stateVectorSource = new VectorSource({
-    url: './india_state_geo.json', // Replace with your state data URL
-    format: new GeoJSON()
-  });
+// Function to retrieve coordinates from a feature's geometry
+function getCoordinatesFromFeature(feature) {
+  return feature.getGeometry().getExtent(); // Get the extent of the geometry
+}
+  
 
   // Create a vector source for the district layer
-  const districtVectorSource = new VectorSource({
-    url: './india_Districts.geojson', // Replace with your district data URL
-    format: new GeoJSON()
-  });
-  // Function to create a filter based on state name (adjust property name if needed)
-  function getStateFilter(selected, category) {
-    return function (feature) {
-      if (category === 'state') {
-        return feature.get('NAME_1').toLowerCase() === selected.toLowerCase(); // Modify property name based on your data
-      } else if (category === 'district') {
-        return feature.get('distname').toLowerCase() === selected.toLowerCase(); // Modify property name based on your data
-      }
-    };
-  }
-
-  // Apply the filter to the source based on selected state
-  stateVectorSource.once('change', function () {
-    stateVectorSource.getFeatures().forEach(function (feature) {
-      if (!getStateFilter(selectedState, "state")(feature)) {
-        stateVectorSource.removeFeature(feature);
-      }
-    });
-  });
-
-  // Apply the filter to the source based on selected district
-  districtVectorSource.once('change', function () {
-    districtVectorSource.getFeatures().forEach(function (feature) {
-      if (!getStateFilter(selectedDistrict, "district")(feature)) {
-        districtVectorSource.removeFeature(feature);
-      }
-    });
-  });
-
-  // Remove previous state layer if exists
-  const existingStateLayer = map.getLayers().getArray().find(layer => layer.get('name') === 'stateLayer');
-  if (existingStateLayer) {
-    map.removeLayer(existingStateLayer);
-  }
-
-  // Remove previous district layer if exists
   const existingDistrictLayer = map.getLayers().getArray().find(layer => layer.get('name') === 'districtLayer');
   if (existingDistrictLayer) {
     map.removeLayer(existingDistrictLayer);
   }
 
-  // Create a state vector layer with the filtered source
-  const stateLayer = new VectorLayer({
-    source: stateVectorSource,
-    style: new Style({
-      stroke: new Stroke({
-        color: '#000',
-        lineCap: 'butt',
-        width: 1
-      }),
-    })
-  });
-  stateLayer.set('name', 'stateLayer');
+   // Remove previous state layer if exists
+   const existingStateLayer = map.getLayers().getArray().find(layer => layer.get('name') === 'stateLayer');
+   if (existingStateLayer) {
+     map.removeLayer(existingStateLayer);
+   }
 
-  // Create a district vector layer with the filtered source
-  const districtLayer = new VectorLayer({
-    source: districtVectorSource,
-    style: new Style({
-      stroke: new Stroke({
-        color: '#a0a',
-        lineCap: 'butt',
-        width: 1
-      }),
-    })
-  });
-  districtLayer.set('name', 'districtLayer');
+  if (selectedDistrict) {
 
-  // Add the new layers to the map
-  map.addLayer(stateLayer);
-  map.addLayer(districtLayer);
+    const districtVectorSource = new VectorSource({
+      url: './india_Districts.geojson', // Replace with your district data URL
+      format: new GeoJSON()
+    });
+
+
+    // Function to create a filter based on state name (adjust property name if needed)
+    function getDistrictFilter(selected) {
+      return function (feature) {
+          return feature.get('distname').toLowerCase() === selected.toLowerCase(); // Modify property name based on your data
+      };
+    }
+
+   // Apply the filter to the source based on selected district
+   districtVectorSource.once('change', function () {
+    districtVectorSource.getFeatures().forEach(function (feature) {
+      if (!getDistrictFilter(selectedDistrict)(feature)) {
+        districtVectorSource.removeFeature(feature);
+      } else {
+        const extent = getCoordinatesFromFeature(feature);
+        map.getView().fit(extent, { duration: 1000 }); // Fit the map view to the extent of the selected district with animation
+      }
+    });
+  });
+
+
+
+    // Remove previous district layer if exists
+
+
+    
+    // Create a district vector layer with the filtered source
+    const districtLayer = new VectorLayer({
+      source: districtVectorSource,
+      style: new Style({
+        stroke: new Stroke({
+          color: '#a0a',
+          lineCap: 'butt',
+          width: 1
+        }),
+      })
+    });
+    districtLayer.set('name', 'districtLayer');
+    map.addLayer(districtLayer);
+
+  }
+  else if (selectedState) {
+
+    // Create a vector source for the state layer
+    const stateVectorSource = new VectorSource({
+      url: './india_state_geo.json', // Replace with your state data URL
+      format: new GeoJSON()
+    });
+    // Function to create a filter based on state name (adjust property name if needed)
+
+    function getStateFilter(selected) {
+      return function (feature) {
+          return feature.get('NAME_1').toLowerCase() === selected.toLowerCase(); // Modify property name based on your data
+     
+      };
+    }
+
+
+      // Apply the filter to the source based on selected state
+      stateVectorSource.once('change', function () {
+        stateVectorSource.getFeatures().forEach(function (feature) {
+          if (!getStateFilter(selectedState)(feature)) {
+            stateVectorSource.removeFeature(feature);
+          } else {
+            const extent = getCoordinatesFromFeature(feature);
+            map.getView().fit(extent, { duration: 1000 }); // Fit the map view to the extent of the selected state with animation
+          }
+        });
+      });
+   
+    // Create a state vector layer with the filtered source
+    const stateLayer = new VectorLayer({
+      source: stateVectorSource,
+      style: new Style({
+        stroke: new Stroke({
+          color: '#000',
+          lineCap: 'butt',
+          width: 1
+        }),
+      })
+    });
+    stateLayer.set('name', 'stateLayer');
+    // Add the new layers to the map
+    map.addLayer(stateLayer);
+  }
+
 });
-
+// ---------------------------------------------------------------------------------------------------------------------------------------------------------
 // state dist Layer select tool starts
 
 // side menu options
@@ -1197,32 +1235,32 @@ document.addEventListener('DOMContentLoaded', function () {
     map.addLayer(geoLocateLayer);
 
 
-  // Ensure that lon and lat are valid numbers
-  if (isNaN(lon) || isNaN(lat) || lon < -180 || lon > 180 || lat < -90 || lat > 90) {
-    alert("Please enter valid longitude (-180 to 180) and latitude (-90 to 90) values.");
-    return;
-  }
+    // Ensure that lon and lat are valid numbers
+    if (isNaN(lon) || isNaN(lat) || lon < -180 || lon > 180 || lat < -90 || lat > 90) {
+      alert("Please enter valid longitude (-180 to 180) and latitude (-90 to 90) values.");
+      return;
+    }
 
-  // Center the map view to the specified coordinates
-  map.getView().setCenter(new fromLonLat([lon, lat]));
-  map.getView().setZoom(10); // Set desired zoom level
+    // Center the map view to the specified coordinates
+    map.getView().setCenter(new fromLonLat([lon, lat]));
+    map.getView().setZoom(10); // Set desired zoom level
 
-  // Drop a pin at the specified coordinates
-  let geoLocatePinFeature = new Feature({
-    geometry: new Point(fromLonLat([lon, lat]))
-  });
+    // Drop a pin at the specified coordinates
+    let geoLocatePinFeature = new Feature({
+      geometry: new Point(fromLonLat([lon, lat]))
+    });
 
-  // Add the pin feature to the pin source
-  pinSource.addFeature(geoLocatePinFeature);
+    // Add the pin feature to the pin source
+    pinSource.addFeature(geoLocatePinFeature);
 
-  let geoLocateStyle = new Style({
-    image: new Icon({
-      anchor: [0.5, 1],
-      src: './modules/location.gif' // URL to the pin icon
-    })
-  });
+    let geoLocateStyle = new Style({
+      image: new Icon({
+        anchor: [0.5, 1],
+        src: './modules/location.gif' // URL to the pin icon
+      })
+    });
 
-  geoLocatePinFeature.setStyle(geoLocateStyle);
+    geoLocatePinFeature.setStyle(geoLocateStyle);
 
     // For demonstration purposes, I'm logging the latitude and longitude
     console.log('Locating:', lat, lon);

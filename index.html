@@ -399,27 +399,7 @@
 
           <!--  -->
 
-          <li class="sidebar_items" onclick="display_toggle_side_Popup('boundary_tool')">
-            <span class="material-symbols-outlined">Layers</span>
-            <ul id="boundary_tool" class="side_menu_popup">
-
-              <form id="filterForm">
-                <label for="state">Select State:</label>
-                <select id="state" name="state">
-                  <option value="">Select State</option>
-                </select>
-                
-                <label for="district">Select District:</label>
-                <select id="district" name="district">
-                  <option value="">Select District</option>
-                </select>
-                
-              </form>
-              <button id="selectButton">Select</button>
-              
-            </ul>
-          </li>
-
+          
           <!-- Pin Drop -->
           <li class="sidebar_items">
             <span class="material-symbols-outlined" onclick="display_toggle_side_Popup('pindrop_tool')">pin_drop</span>
@@ -435,32 +415,54 @@
             </ul>
           </li>
           <!-- Pin Drop -->
+          
 
-
-
-
-          <li class="sidebar_items">
+          
+          
+          <li class="sidebar_items" onclick="display_toggle_side_Popup('boundary_tool')">
+            <span class="material-symbols-outlined">filter_alt</span>
+            <ul id="boundary_tool" class="side_menu_popup">
+          
+              <form id="filterForm">
+                <label for="state">Select State:</label>
+                <select id="state" name="state">
+                  <option value="">Select State</option>
+                </select>
+                
+                <label for="district">Select District:</label>
+                <select id="district" name="district">
+                  <option value="">Select District</option>
+                </select>
+                
+              </form>
+              <button id="selectButton">Select</button>
+              <button id="remove-bg">Select Only</button>
+          
+              
+            </ul>
+          </li>
+          <!-- <li class="sidebar_items">
             <span class="material-symbols-outlined">filter_alt</span>
             
-          </li>
+          </li> -->
           <li class="sidebar_items">
             <span class="material-symbols-outlined">info</span>
             
           </li>
-
+          
           <li class="sidebar_items">
             <span class="material-symbols-outlined">clear_all</span>
             
           </li>
-
-
+          
+          
         </ul>
         
       </div>
-
+      
     </div>
   </div>
-
+  
   <div id="base_layer_container">
     <div id="base_layer_container_icon" ></div>
     <div id="base_layer_menu">
@@ -474,17 +476,17 @@
       </ul>
     </div>
   </div>
-
- 
-
-  </div>
-
-  <div id='scale-line-control' class="scaleLine" >
-
-  </div>
-
-
   
+  
+  
+</div>
+
+<div id='scale-line-control' class="scaleLine" >
+  
+</div>
+
+
+
   <footer>
     <div>
       <div id="long_lat">
