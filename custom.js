@@ -245,3 +245,10 @@ function activateOption(element) {
   element.classList.add('active');
 }
 
+function clearLocation() {
+  // Get the input element
+  var input = document.getElementById("locationInput");
+
+  // Clear the input field
+  input.value = "";
+}

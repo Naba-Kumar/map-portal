@@ -1194,28 +1194,35 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Center the map view to the specified coordinates
-    map.getView().setCenter(new fromLonLat([lon, lat]));
-    map.getView().setZoom(16); // Set desired zoom level
-
-    // Drop a pin at the specified coordinates
-    let geolocateFeature = new Feature({
-      geometry: new Point(fromLonLat([lon, lat]))
-    });
-
-    // Add the pin feature to the pin source
-    geoLocateSource.addFeature(geolocateFeature);
-
-    let pinStyle = new Style({
-      image: new Icon({
-        anchor: [0.5, 1],
-        src: './modules/location.gif' // URL to the pin icon
-      })
-    });
-
-    geolocateFeature.setStyle(pinStyle);
+    map.addLayer(geoLocateLayer);
 
 
+  // Ensure that lon and lat are valid numbers
+  if (isNaN(lon) || isNaN(lat) || lon < -180 || lon > 180 || lat < -90 || lat > 90) {
+    alert("Please enter valid longitude (-180 to 180) and latitude (-90 to 90) values.");
+    return;
+  }
 
+  // Center the map view to the specified coordinates
+  map.getView().setCenter(new fromLonLat([lon, lat]));
+  map.getView().setZoom(10); // Set desired zoom level
+
+  // Drop a pin at the specified coordinates
+  let geoLocatePinFeature = new Feature({
+    geometry: new Point(fromLonLat([lon, lat]))
+  });
+
+  // Add the pin feature to the pin source
+  pinSource.addFeature(geoLocatePinFeature);
+
+  let geoLocateStyle = new Style({
+    image: new Icon({
+      anchor: [0.5, 1],
+      src: './modules/location.gif' // URL to the pin icon
+    })
+  });
+
+  geoLocatePinFeature.setStyle(geoLocateStyle);
 
     // For demonstration purposes, I'm logging the latitude and longitude
     console.log('Locating:', lat, lon);
@@ -1223,47 +1230,3 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 });
 
-// geo coder
-
-map.addLayer(pinLayer);
-
-document.getElementById('locate_Pindrop').addEventListener('click', function () {
-  // Get longitude and latitude values from input fields
-  let lon = parseFloat(document.getElementById("lon").value);
-  let lat = parseFloat(document.getElementById("lat").value);
-
-
-  const pinSource = new VectorSource();
-  const pinLayer = new VectorLayer({
-    source: pinSource
-  });
-  // Center the map view to the specified coordinates
-  map.getView().setCenter(new fromLonLat([lon, lat]));
-  map.getView().setZoom(10); // Set desired zoom level
-
-  // Drop a pin at the specified coordinates
-  let pinFeature = new Feature({
-    geometry: new Point(fromLonLat([lon, lat]))
-  });
-
-  // Add the pin feature to the pin source
-  pinSource.addFeature(pinFeature);
-
-  let pinStyle = new Style({
-    image: new Icon({
-      anchor: [0.5, 1],
-      src: 'https://openlayers.org/en/v6.13.0/examples/data/icon.png' // URL to the pin icon
-    })
-  });
-
-  pinFeature.setStyle(pinStyle);
-
-
-})
-
-document.getElementById('locate_Pinremove').addEventListener('click', function () {
-  console.log("remove")
-
-  pinSource.clear(); // Clear all features from the pin source
-
-})

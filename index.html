@@ -232,13 +232,26 @@
               <label for="Search_area">Search : </label>
               <input type="text" id="locationInput" placeholder="Enter location name">
               <br>
-              <button id="searchButton" value="submit">Search</button>
+              <button id="clearButton"  onclick="clearLocation()">Clear</button>
               <div id="resultContainer" class="result-container">
                 <!-- Results will be displayed here -->
             </div>
             </div>
-            
           </div>
+
+
+            <div class="side_menu_container_optins">
+              <li onclick="display_toggle_block('requestData')">Request Data</li>
+              <div class="select-container, side_menu_cat2" id="requestData">
+                <label for="Search_area">Search : </label>
+                <input type="text" id="locationInput" placeholder="Enter location name">
+                <br>
+                <button id="clearButton"  onclick="clearLocation()">Clear</button>
+                <div id="resultContainer" class="result-container">
+                  <!-- Results will be displayed here -->
+              </div>
+              </div>
+            
 
         </ul>
       </nav>
