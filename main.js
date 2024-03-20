@@ -88,11 +88,20 @@ var transportLayer = new TileLayer({
 
 });
 
+const labelLayer = new TileLayer({
+  source: new XYZ({
+    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}'
+  }),
+  title: 'labelLayer',
+  visible: false,
+  name: 'labelLayer'
+});
+
 
 
 
 const map = new Map({
-  layers: [raster, vector, standardLayer, satelite, transportLayer],
+  layers: [raster, vector, standardLayer, satelite, transportLayer, labelLayer],
   target: 'map',
   view: new View({
     center: new fromLonLat([92.07298769282396, 26.213469404852535]),
@@ -1155,6 +1164,24 @@ function toggleLayer(layerName) {
 
 window.handletoggleLayer = function (layerName) {
   toggleLayer(layerName);
+};
+
+function toggleLabelLayer(layerName) {
+  var layers = map.getLayers().getArray();
+  layers.forEach(function (layer) {
+    console.log(layer.get('visible'))
+    if (layer.get('name') === layerName) {
+      if (layer.get('visible') === true) {
+        layer.setVisible(false);
+      } else {
+        layer.setVisible(true);
+      }
+    }
+  });
+}
+
+window.handletoggleLabelLayer = function (layerName) {
+  toggleLabelLayer(layerName);
 };
 
 

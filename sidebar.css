@@ -660,6 +660,15 @@ footer  #lonlat_display{
     color: #fff;
 }
 
+#label{
+    font-size: 12px;
+    background-color: #03494e;
+    margin-top: 20px;
+    color: #fff;
+    padding: 7px 3px;
+    font-family: 'Courier New', Courier, monospace;
+    width: 80px;
+}
 
 
 
