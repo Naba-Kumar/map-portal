@@ -212,7 +212,7 @@
           </div>
 
           
-          <div class="side_menu_container_optins">
+          <!-- <div class="side_menu_container_optins">
             <li onclick="display_toggle_block('Swipe')">Swipe Tool</li>
             <div class="select-container, side_menu_cat2" id="Swipe">
               <select id="layerSelect">
@@ -224,7 +224,7 @@
               <input type="reset" value="Clear">
             </div>
             
-          </div>
+          </div> -->
           
           <div class="side_menu_container_optins">
             <li onclick="display_toggle_block('geocode')">Geocode Locator</li>
@@ -290,12 +290,11 @@
           <li class="sidebar_items" onclick="display_toggle('edit_tool')">
             <span class="material-symbols-outlined">edit</span>
             <ul id="edit_tool" class="sub-menu">
-              <li onclick="handleMeasure('Point')"><span class="material-symbols-outlined">radio_button_checked</span>
-              </li>
-              <li onclick="handleMeasure('LineString')"><span class="material-symbols-outlined">timeline</span></li>
-              <li onclick="handleMeasure('Polygon')"><span class="material-symbols-outlined">hexagon</span></li>
-              <li onclick="handleMeasure('Circle')"><span class="material-symbols-outlined">circle</span></li>
-              <li onclick="handleMeasure('undo')"><span class="material-symbols-outlined">undo</span></li>
+              <li onclick="handleDraw('Point')"><span class="material-symbols-outlined">radio_button_checked</span></li>
+              <li onclick="handleDraw('LineString')"><span class="material-symbols-outlined">timeline</span></li>
+              <li onclick="handleDraw('Polygon')"><span class="material-symbols-outlined">hexagon</span></li>
+              <li onclick="handleDraw('Circle')"><span class="material-symbols-outlined">circle</span></li>
+              <li onclick="handleDraw('clear')"><span class="material-symbols-outlined">ink_eraser</span></li>
               
             </ul>
           </li>
@@ -491,7 +490,7 @@
   <footer>
     <div>
       <div id="long_lat">
-        <p>Lat/Long :</p>
+        <p>Coordinate :</p>
         <!-- <input type="text" id="lonlat"> -->
         <div id="lonlat_display"></div>
         

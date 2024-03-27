@@ -1,3 +1,4 @@
+
 import './style.css';
 import 'ol-layerswitcher/dist/ol-layerswitcher.css';
 
@@ -26,6 +27,8 @@ import Icon from 'ol/style/Icon.js';
 import XYZ from 'ol/source/XYZ.js';
 import axios from 'axios';
 import Papa from 'papaparse';
+import { fromExtent } from 'ol/geom/Polygon';
+import * as turf from '@turf/turf';
 
 
 
@@ -42,51 +45,10 @@ const raster = new TileLayer({
 const source = new VectorSource({ wrapX: false });
 
 
-const vector = new VectorLayer({
-  source: source,
-  style: {
-    'fill-color': 'rgba(255, 255, 255, 0.2)',
-    'stroke-color': '#ffcc33',
-    'stroke-width': 2,
-    'circle-radius': 7,
-    'circle-fill-color': '#ffcc33',
-  },
-});
+
 
 
 // Define base layers
-var standardLayer = new TileLayer({
-  source: new XYZ({
-    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
-    attributions: ['&copy; <a href="https://www.esri.com/en-us/home">Esri</a>']
-  }),
-  title: 'Standard',
-  visible: false,
-  name: 'standardLayer'
-});
-
-var satelite = new TileLayer({
-  source: new XYZ({
-    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-    attributions: ['&copy; <a href="https://www.esri.com/en-us/home">Esri</a>']
-  }),
-  title: 'satelite',
-  visible: false,
-  name: 'satelite'
-
-
-});
-
-var transportLayer = new TileLayer({
-  source: new XYZ({
-    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Transportation/MapServer/tile/{z}/{y}/{x}',
-    attributions: ['&copy; <a href="https://www.esri.com/en-us/home">Esri</a>']
-  }),
-  title: 'Transport',
-  visible: false,
-  name: 'transportLayer'
-
-});
 
 const labelLayer = new TileLayer({
   source: new XYZ({
@@ -98,10 +60,44 @@ const labelLayer = new TileLayer({
 });
 
 
+var standardLayer = new TileLayer({
+  source: new XYZ({
+    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
+    attributions: ['&copy; <a href="https://justpaste.it/redirect/ecx3y/https%3A%2F%2Fwww.esri.com%2Fen-us%2Fhome">Esri</a>']
+  }),
+  title: 'Standard',
+  visible: false,
+  name: 'standardLayer'
+});
+
+var sateliteLayer = new TileLayer({
+  source: new XYZ({
+    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+    attributions: ['&copy; <a href="https://justpaste.it/redirect/ecx3y/https%3A%2F%2Fwww.esri.com%2Fen-us%2Fhome">Esri</a>']
+  }),
+  title: 'satelite',
+  visible: false,
+  name: 'sateliteLayer'
+
+
+});
+
+var transportLayer = new TileLayer({
+  source: new XYZ({
+    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Transportation/MapServer/tile/{z}/{y}/{x}',
+    attributions: ['&copy; <a href="https://justpaste.it/redirect/ecx3y/https%3A%2F%2Fwww.esri.com%2Fen-us%2Fhome">Esri</a>']
+  }),
+  title: 'Transport',
+  visible: false,
+  name: 'transportLayer'
+
+});
+
+
 
 
 const map = new Map({
-  layers: [raster, vector, standardLayer, satelite, transportLayer, labelLayer],
+  layers: [raster, labelLayer, standardLayer, sateliteLayer, transportLayer],
   target: 'map',
   view: new View({
     center: new fromLonLat([92.07298769282396, 26.213469404852535]),
@@ -110,6 +106,11 @@ const map = new Map({
   controls: [],
   keyboardEventTarget: document
 });
+
+const worldview = new View({
+  center: [0, 0],
+  zoom: -2
+})
 
 // let scaleLineControl = new ScaleLine({
 //   className: "scaleLine",
@@ -284,9 +285,10 @@ const pointerMoveHandler = function (evt) {
     return;
   }
   /** @type {string} */
-  let helpMsg = 'Click to start drawing';
+  let helpMsg = '';
 
   if (sketch) {
+    helpMsg = 'Click to start drawing';
     const geom = sketch.getGeometry();
     if (geom instanceof Polygon) {
       helpMsg = continuePolygonMsg;
@@ -310,18 +312,13 @@ map.getViewport().addEventListener('mouseout', function () {
 });
 
 
-let draw; // global so we can remove it later
+let Measureraw; // global so we can remove it later
 
 /**
  * Format length output.
  * @param {LineString} line The line.
  * @return {string} The formatted length.
  */
-
-
-
-
-
 
 const formatLength = function (line) {
   const length = getLength(line);
@@ -373,23 +370,47 @@ const style = new Style({
 
 
 function customMeasure(event) {
+
+  if (event === 'clear') {
+    console.log("remove")
+    map.getLayers().forEach(function (measureVector) {
+      if (measureVector instanceof VectorLayer) {
+        map.removeLayer(measureVector);
+      }
+    });
+
+    // Clear the source of the measurement layers
+    source.clear();
+
+    return
+    // measureTooltip.getSource().clear();
+    // helpTooltip.getSource().clear();
+
+  }
+  map.removeInteraction(shapeDraw);
+  sketch = null;
+  measureTooltipElement = null;
+  createMeasureTooltip();
+
+
+  const measureVector = new VectorLayer({
+    source: source,
+    style: {
+      'fill-color': 'rgba(255, 255, 255, 0.2)',
+      'stroke-color': '#075225',
+      'stroke-width': 2,
+      'circle-radius': 7,
+      'circle-fill-color': '#075225',
+    },
+  });
+  map.addLayer(measureVector)
   // console.log(event)
 
   // const type = event == 'area' ? 'Polygon' : 'LineString';
 
   // console.log(type)
 
-  if (event === 'clear') {
-
-    // removeInteractions();
-    // console.log(map.getOverlays())
-    map.getOverlays().clear();
-    // measureTooltip.getSource().clear();
-    // helpTooltip.getSource().clear();
-    return
-
-  }
-  draw = new Draw({
+  Measureraw = new Draw({
     source: source,
     type: event,
     style: function (feature) {
@@ -399,13 +420,14 @@ function customMeasure(event) {
       }
     },
   });
-  map.addInteraction(draw);
+  map.addInteraction(Measureraw);
 
   createMeasureTooltip();
   createHelpTooltip();
 
+
   let listener;
-  draw.on('drawstart', function (evt) {
+  Measureraw.on('drawstart', function (evt) {
     // set sketch
     sketch = evt.feature;
 
@@ -427,7 +449,8 @@ function customMeasure(event) {
     });
   });
 
-  draw.on('drawend', function () {
+  Measureraw.on('drawend', function () {
+    // return
     measureTooltipElement.className = 'ol-tooltip ol-tooltip-static';
     measureTooltip.setOffset([0, -7]);
     // unset sketch
@@ -436,10 +459,14 @@ function customMeasure(event) {
     measureTooltipElement = null;
     createMeasureTooltip();
     unByKey(listener);
+    map.removeInteraction(Measureraw);
+
   });
 
 
+
 }
+
 
 
 /**
@@ -488,56 +515,94 @@ function createMeasureTooltip() {
 
 
 window.handleMeasure = function (event) {
-  map.removeInteraction(draw);
+  map.removeInteraction(Measureraw);
   customMeasure(event);
 };
 // measure tool ends...........
 
 
 
+
+
 // Draw feature starts.........
-const drawStyles = {
-  Point: {
-    'circle-radius': 5,
-    'circle-fill-color': 'red',
-  },
-  LineString: {
-    'circle-radius': 5,
-    'circle-fill-color': 'red',
-    'stroke-color': 'yellow',
-    'stroke-width': 2,
-  },
-  Polygon: {
-    'circle-radius': 5,
-    'circle-fill-color': 'red',
-    'stroke-color': 'yellow',
-    'stroke-width': 2,
-    'fill-color': 'blue',
-  },
-  Circle: {
-    'circle-radius': 5,
-    'circle-fill-color': 'red',
-    'stroke-color': 'blue',
-    'stroke-width': 2,
-    'fill-color': 'yellow',
-  },
-};
 
-let drawFeature;
+
+let shapeDraw;
+
 function customDraw(event) {
-  const value = event;
-  if (value !== 'None') {
-    drawFeature = new Draw({
-      source: source,
-      type: event,
-      style: drawStyles[value],
+  if (event === 'clear') {
+    console.log("remove")
+    map.getLayers().forEach(function (drawVector) {
+      if (drawVector instanceof VectorLayer) {
+        map.removeLayer(drawVector);
+      }
     });
-    map.addInteraction(drawFeature);
-  }
-}
+    
+    map.removeInteraction(Measureraw);
+    sketch = null;
+    measureTooltipElement = null;
+    createMeasureTooltip();
+    
 
+
+    // Clear the source of the measurement layers
+    source.clear();
+
+    return
+    // measureTooltip.getSource().clear();
+    // helpTooltip.getSource().clear();
+
+  }
+  const drawVector = new VectorLayer({
+    source: source,
+    style: {
+      'fill-color': 'rgba(255, 255, 255, 0.2)',
+      'stroke-color': '#164ff7',
+      'stroke-width': 2,
+      'circle-radius': 7,
+      'circle-fill-color': '#ffcc33',
+    },
+  });
+  map.addLayer(drawVector)
+
+
+  shapeDraw = new Draw({
+    source: source,
+    type: event,
+    style: new Style({
+      fill: new Fill({
+        color: 'rgba(255, 255, 255, 0.5)',
+      }),
+      stroke: new Stroke({
+        color: 'rgba(0, 0, 0, 0.8)',
+        lineDash: [10, 10],
+        width: 2,
+      }),
+    })
+  });
+  map.addInteraction(shapeDraw);
+
+  createMeasureTooltip();
+  createHelpTooltip();
+
+
+  let listener;
+
+  shapeDraw.on('drawend', function () {
+    // return
+    measureTooltipElement.className = 'ol-tooltip ol-tooltip-static';
+    measureTooltip.setOffset([0, -7]);
+    // unset sketch
+    sketch = null;
+    // unset tooltip so that a new one can be created
+    measureTooltipElement = null;
+    createMeasureTooltip();
+    unByKey(listener);
+    map.removeInteraction(shapeDraw);
+  });
+}
 window.handleDraw = function (event) {
-  map.removeInteraction(drawFeature);
+  map.removeInteraction(shapeDraw);
   customDraw(event);
 };
 
@@ -549,13 +614,6 @@ window.handleDraw = function (event) {
 
 
 
-// Add an empty vector source to hold pins
-const pinSource = new VectorSource();
-const pinLayer = new VectorLayer({
-  source: pinSource
-});
-map.addLayer(pinLayer);
-
 
 
 
@@ -563,6 +621,13 @@ map.addLayer(pinLayer);
 
 
 // -------------------------------------------------------------------------------------------------------------------------
+
+// Add an empty vector source to hold pins
+const pinSource = new VectorSource();
+const pinLayer = new VectorLayer({
+  source: pinSource
+});
+map.addLayer(pinLayer);
 
 document.getElementById('locate_Pindrop').addEventListener('click', function () {
   // Get longitude and latitude values from input fields
@@ -576,7 +641,7 @@ document.getElementById('locate_Pindrop').addEventListener('click', function () 
   }
 
   // Center the map view to the specified coordinates
-  
+
   map.getView().setCenter(new fromLonLat([lon, lat]));
   map.getView().setZoom(10); // Set desired zoom level
 
@@ -591,7 +656,7 @@ document.getElementById('locate_Pindrop').addEventListener('click', function () 
   let pinStyle = new Style({
     image: new Icon({
       anchor: [0.5, 1],
-      src: 'https://openlayers.org/en/v6.13.0/examples/data/icon.png' // URL to the pin icon
+      src: './modules/pin.png' // URL to the pin icon
     })
   });
 
@@ -685,11 +750,10 @@ document.getElementById('selectButton').addEventListener('click', function () {
   console.log("Selected State:", selectedState);
   console.log("Selected District:", selectedDistrict);
 
-// Function to retrieve coordinates from a feature's geometry
-function getCoordinatesFromFeature(feature) {
-  return feature.getGeometry().getExtent(); // Get the extent of the geometry
-}
-  
+  // Function to retrieve coordinates from a feature's geometry
+  function getCoordinatesFromFeature(feature) {
+    return feature.getGeometry().getExtent(); // Get the extent of the geometry
+  }
 
   // Create a vector source for the district layer
   const existingDistrictLayer = map.getLayers().getArray().find(layer => layer.get('name') === 'districtLayer');
@@ -697,11 +761,12 @@ function getCoordinatesFromFeature(feature) {
     map.removeLayer(existingDistrictLayer);
   }
 
-   // Remove previous state layer if exists
-   const existingStateLayer = map.getLayers().getArray().find(layer => layer.get('name') === 'stateLayer');
-   if (existingStateLayer) {
-     map.removeLayer(existingStateLayer);
-   }
+  // Remove previous state layer if exists
+
+  const existingStateLayer = map.getLayers().getArray().find(layer => layer.get('name') === 'stateLayer');
+  if (existingStateLayer) {
+    map.removeLayer(existingStateLayer);
+  }
 
   if (selectedDistrict) {
 
@@ -714,28 +779,28 @@ function getCoordinatesFromFeature(feature) {
     // Function to create a filter based on state name (adjust property name if needed)
     function getDistrictFilter(selected) {
       return function (feature) {
-          return feature.get('distname').toLowerCase() === selected.toLowerCase(); // Modify property name based on your data
+        return feature.get('distname').toLowerCase() === selected.toLowerCase(); // Modify property name based on your data
       };
     }
 
-   // Apply the filter to the source based on selected district
-   districtVectorSource.once('change', function () {
-    districtVectorSource.getFeatures().forEach(function (feature) {
-      if (!getDistrictFilter(selectedDistrict)(feature)) {
-        districtVectorSource.removeFeature(feature);
-      } else {
-        const extent = getCoordinatesFromFeature(feature);
-        map.getView().fit(extent, { duration: 1000 }); // Fit the map view to the extent of the selected district with animation
-      }
+    // Apply the filter to the source based on selected district
+    districtVectorSource.once('change', function () {
+      districtVectorSource.getFeatures().forEach(function (feature) {
+        if (!getDistrictFilter(selectedDistrict)(feature)) {
+          districtVectorSource.removeFeature(feature);
+        } else {
+          const extent = getCoordinatesFromFeature(feature);
+          map.getView().fit(extent, { duration: 1000 }); // Fit the map view to the extent of the selected district with animation
+        }
+      });
     });
-  });
 
 
 
     // Remove previous district layer if exists
 
 
-    
+
     // Create a district vector layer with the filtered source
     const districtLayer = new VectorLayer({
       source: districtVectorSource,
@@ -748,9 +813,75 @@ function getCoordinatesFromFeature(feature) {
       })
     });
     districtLayer.set('name', 'districtLayer');
+
     map.addLayer(districtLayer);
 
+    districtLayer.getSource().on('addfeature', function () {
+
+      // Get the geometry of the districtLayer
+      // var districtLayerClipGeometry = districtLayer.getSource().getFeatures()[1].getGeometry();
+
+      var districtLayerClipGeometry = districtLayer.getSource().getFeatures().find(feature => getDistrictFilter(selectedDistrict)(feature)).getGeometry();
+
+
+      // console.log(stateLayer.getSource().getFeatures())
+      // Get the bounding box of the map
+      // var mapExtent0 = map.getView().calculateExtent(map.getSize());
+
+      var mapExtent = worldview.calculateExtent(map.getSize());
+
+      // console.log(mapExtent0)
+      // console.log(mapExtent)
+
+      var boundingBoxPolygon = new fromExtent(mapExtent);
+      console.log(boundingBoxPolygon)
+
+      // Convert the bounding box polygon to GeoJSON
+      const format = new GeoJSON();
+
+      var boundingBoxGeoJSON = format.writeGeometryObject(boundingBoxPolygon);
+
+      // Convert the districtLayerClipGeometry to GeoJSON
+      var clipGeoJSON = format.writeGeometryObject(districtLayerClipGeometry);
+      // console.log(clipGeoJSON())
+
+      // Subtract the districtLayerClipGeometry from the bounding box geometry
+      var outsidePolygonGeoJSON = turf.difference(boundingBoxGeoJSON, clipGeoJSON);
+
+      // Convert the resulting GeoJSON back to an OpenLayers feature
+      var outsideFeature = format.readFeature(outsidePolygonGeoJSON);
+
+      // Create a vector layer for the outside feature
+      var outsideVectorLayer = new VectorLayer({
+        source: new VectorSource({
+          features: [outsideFeature]
+        }),
+        style: new Style({
+          fill: new Fill({
+            color: 'rgba(255, 255, 255, 1)' // Semi-transparent red fill (customize as needed)
+          })
+        })
+      });
+
+      // Add the outside vector layer to the map
+      outsideVectorLayer.set('name', 'outsideVectorLayer');
+
+      // Create a vector source for the district layer
+      const distExistingOutsideLayer = map.getLayers().getArray().find(layer => layer.get('name') === 'outsideVectorLayer');
+      if (distExistingOutsideLayer) {
+        map.removeLayer(distExistingOutsideLayer);
+        console.log("Layer exists and removed");
+      } else {
+        console.log("Layer does not exist");
+      }
+
+      map.addLayer(outsideVectorLayer);
+    });
+
   }
+
+
+
   else if (selectedState) {
 
     // Create a vector source for the state layer
@@ -762,24 +893,27 @@ function getCoordinatesFromFeature(feature) {
 
     function getStateFilter(selected) {
       return function (feature) {
-          return feature.get('NAME_1').toLowerCase() === selected.toLowerCase(); // Modify property name based on your data
-     
+        return feature.get('NAME_1').toLowerCase() === selected.toLowerCase(); // Modify property name based on your data
+
       };
     }
 
 
-      // Apply the filter to the source based on selected state
-      stateVectorSource.once('change', function () {
-        stateVectorSource.getFeatures().forEach(function (feature) {
-          if (!getStateFilter(selectedState)(feature)) {
-            stateVectorSource.removeFeature(feature);
-          } else {
-            const extent = getCoordinatesFromFeature(feature);
-            map.getView().fit(extent, { duration: 1000 }); // Fit the map view to the extent of the selected state with animation
-          }
-        });
+    // Apply the filter to the source based on selected state
+    stateVectorSource.once('change', function () {
+      stateVectorSource.getFeatures().forEach(function (feature) {
+        if (!getStateFilter(selectedState)(feature)) {
+          stateVectorSource.removeFeature(feature);
+        } else {
+          const extent = getCoordinatesFromFeature(feature);
+          // console.log(extent)
+
+
+          map.getView().fit(extent, { duration: 1000 }); // Fit the map view to the extent of the selected state with animation
+        }
       });
-   
+    });
+
     // Create a state vector layer with the filtered source
     const stateLayer = new VectorLayer({
       source: stateVectorSource,
@@ -792,8 +926,72 @@ function getCoordinatesFromFeature(feature) {
       })
     });
     stateLayer.set('name', 'stateLayer');
-    // Add the new layers to the map
     map.addLayer(stateLayer);
+    // Add the new layers to the map
+    //
+    stateLayer.getSource().on('addfeature', function () {
+
+      // Get the geometry of the stateLayer
+      // var stateLayerClipGeometry = stateLayer.getSource().getFeatures()[1].getGeometry();
+
+      var stateLayerClipGeometry = stateLayer.getSource().getFeatures().find(feature => getStateFilter(selectedState)(feature)).getGeometry();
+
+
+      // console.log(stateLayer.getSource().getFeatures())
+      // Get the bounding box of the map
+      // var mapExtent0 = map.getView().calculateExtent(map.getSize());
+
+      var mapExtent = worldview.calculateExtent(map.getSize());
+
+      // console.log(mapExtent0)
+      // console.log(mapExtent)
+
+      var boundingBoxPolygon = new fromExtent(mapExtent);
+      console.log(boundingBoxPolygon)
+
+      // Convert the bounding box polygon to GeoJSON
+      const format = new GeoJSON();
+
+      var boundingBoxGeoJSON = format.writeGeometryObject(boundingBoxPolygon);
+
+      // Convert the stateLayerClipGeometry to GeoJSON
+      var clipGeoJSON = format.writeGeometryObject(stateLayerClipGeometry);
+      // console.log(clipGeoJSON())
+
+      // Subtract the stateLayerClipGeometry from the bounding box geometry
+      var outsidePolygonGeoJSON = turf.difference(boundingBoxGeoJSON, clipGeoJSON);
+
+      // Convert the resulting GeoJSON back to an OpenLayers feature
+      var outsideFeature = format.readFeature(outsidePolygonGeoJSON);
+
+      // Create a vector layer for the outside feature
+      var outsideVectorLayer = new VectorLayer({
+        source: new VectorSource({
+          features: [outsideFeature]
+        }),
+        style: new Style({
+          fill: new Fill({
+            color: 'rgba(255, 255, 255, 1)' // Semi-transparent red fill (customize as needed)
+          })
+        })
+      });
+
+      // Add the outside vector layer to the map
+      outsideVectorLayer.set('name', 'outsideVectorLayer');
+
+      // Create a vector source for the district layer
+      const stateExistingOutsideLayer = map.getLayers().getArray().find(layer => layer.get('name') === 'outsideVectorLayer');
+      if (stateExistingOutsideLayer) {
+        map.removeLayer(stateExistingOutsideLayer);
+        console.log("Layer exists and removed");
+      } else {
+        console.log("Layer does not exist");
+      }
+
+      map.addLayer(outsideVectorLayer);
+    });
+
+
   }
 
 });
@@ -806,13 +1004,13 @@ function getCoordinatesFromFeature(feature) {
 // state boundary
 
 
-const atatecheckbox = document.getElementById('stateboundary');
+const satatecheckbox = document.getElementById('stateboundary');
 
-atatecheckbox.addEventListener('change', function () {
+satatecheckbox.addEventListener('change', function () {
   // Get the existing state layer if it exists
   const existingStateLayer = map.getLayers().getArray().find(layer => layer.get('name') === 'stateLayer');
 
-  if (atatecheckbox.checked) {
+  if (satatecheckbox.checked) {
     // Create a vector source for the state layer
     const stateVectorSource = new VectorSource({
       url: './assam_boundary.geojson', // Replace with your state data URL
@@ -922,66 +1120,6 @@ districtcheckbox.addEventListener('change', function () {
 
 // ---Upload
 
-// document.getElementById("csvUpload").addEventListener('click', function () {
-//   var fileInput = document.getElementById('csvInput');
-//   var file = fileInput.files[0];
-
-//   if (!file) {
-//     alert("Please select a file to upload.");
-//     return;
-//   }
-
-//   var reader = new FileReader();
-//   reader.onload = function (event) {
-//     var data = event.target.result;
-//     processData(data);
-//   };
-//   reader.onerror = function (event) {
-//     console.error("File could not be read! Code " + event.target.error.code);
-//   };
-//   reader.readAsText(file);
-// });
-
-// function processData(data) {
-//   try {
-//     // Split CSV data into lines
-//     var lines = data.split('\n');
-
-//     // Loop through each line (assuming CSV format is "latitude,longitude")
-//     lines.forEach(function(line) {
-//       var values = line.split(',');
-//       console.log(values)
-//       if (values.length === 2) {
-//         var latitude = parseFloat(values[0]);
-//         var longitude = parseFloat(values[1]);
-
-//         // Check if latitude and longitude are valid numbers
-//         if (!isNaN(latitude) && !isNaN(longitude)) {
-//           // Create a marker for each coordinate and add it to the map
-//           var marker = new Feature({
-//             geometry: new ol.geom.Point(fromLonLat([longitude, latitude]))
-//           });
-
-//           var vectorSourceUpload = new VectorSource({
-//             features: [marker]
-//           });
-
-//           var vectorLayerUpload = new VectorLayer({
-//             source: vectorSourceUpload
-//           });
-
-//           map.addLayer(vectorLayerUpload);
-//         } else {
-//           console.error("Invalid latitude or longitude in CSV.");
-//         }
-//       } else {
-//         console.error("Invalid data format in CSV.");
-//       }
-//     });
-//   } catch (error) {
-//     console.error("Error processing CSV:", error);
-//   }
-// }
 
 
 
@@ -1253,45 +1391,94 @@ document.addEventListener('DOMContentLoaded', function () {
   function locateLocation(lat, lon) {
     // Here, you can write your code to locate the location on the map
 
-    const geoLocateSource = new VectorSource();
-    const geoLocateLayer = new VectorLayer({
-      source: geoLocateSource
-    });
+    // const geoLocateSource = new VectorSource();
+    // const geoLocateLayer = new VectorLayer({
+    //   source: geoLocateSource
+    // });
 
     // Center the map view to the specified coordinates
-    map.addLayer(geoLocateLayer);
 
-
-    // Ensure that lon and lat are valid numbers
-    if (isNaN(lon) || isNaN(lat) || lon < -180 || lon > 180 || lat < -90 || lat > 90) {
-      alert("Please enter valid longitude (-180 to 180) and latitude (-90 to 90) values.");
-      return;
-    }
-
-    // Center the map view to the specified coordinates
     map.getView().setCenter(new fromLonLat([lon, lat]));
     map.getView().setZoom(10); // Set desired zoom level
 
     // Drop a pin at the specified coordinates
-    let geoLocatePinFeature = new Feature({
+    let pinFeature = new Feature({
       geometry: new Point(fromLonLat([lon, lat]))
     });
 
     // Add the pin feature to the pin source
-    pinSource.addFeature(geoLocatePinFeature);
+    pinSource.addFeature(pinFeature);
 
-    let geoLocateStyle = new Style({
+    let pinStyle = new Style({
       image: new Icon({
         anchor: [0.5, 1],
-        src: './modules/location.gif' // URL to the pin icon
+        src: './modules/location-pin.png' // URL to the pin icon
       })
     });
 
-    geoLocatePinFeature.setStyle(geoLocateStyle);
-
-    // For demonstration purposes, I'm logging the latitude and longitude
-    console.log('Locating:', lat, lon);
-    // You can use these coordinates to display the location on the map using OpenLayers or any other mapping library
+    pinFeature.setStyle(pinStyle);
   }
 });
 
+// geo coder
+
+// map.addLayer(pinLayer);
+
+// document.getElementById('locate_Pindrop').addEventListener('click', function () {
+//   // Get longitude and latitude values from input fields
+//   let lon = parseFloat(document.getElementById("lon").value);
+//   let lat = parseFloat(document.getElementById("lat").value);
+
+
+//   const pinSource = new VectorSource();
+//   const pinLayer = new VectorLayer({
+//     source: pinSource
+//   });
+//   // Center the map view to the specified coordinates
+//   map.getView().setCenter(new fromLonLat([lon, lat]));
+//   map.getView().setZoom(10); // Set desired zoom level
+
+//   // Drop a pin at the specified coordinates
+//   let pinFeature = new Feature({
+//     geometry: new Point(fromLonLat([lon, lat]))
+//   });
+
+//   // Add the pin feature to the pin source
+//   pinSource.addFeature(pinFeature);
+
+//   let pinStyle = new Style({
+//     image: new Icon({
+//       anchor: [0.5, 1],
+//       src: './modules/pin.png' // URL to the pin icon
+//     })
+//   });
+//   pinFeature.setStyle(pinStyle);
+// })
+
+// document.getElementById('locate_Pinremove').addEventListener('click', function () {
+//   console.log("remove")
+//   pinSource.clear(); // Clear all features from the pin source
+// })
+
+
+// printtool////
+
+document.getElementById('printButton').addEventListener('click', function () {
+  console.log("hii")
+  // Create a new window for printing
+  var printWindow = window.open('', '_blank');
+  var printDocument = printWindow.document;
+
+  // Create a clone of the map container
+  var mapContainer = document.getElementById('map').cloneNode(true);
+
+  // Append the cloned map container to the print document
+  printDocument.body.appendChild(mapContainer);
+
+  // Trigger print
+  printWindow.print();
+
+});
+
+// map.addControl(printControl);
+// print tool
