@@ -22,6 +22,7 @@
   <title>Assam Map Portal</title>
 </head>
 
+
 <body id="body">
   
   
@@ -206,7 +207,7 @@
             <li onclick="display_toggle_block('upload')">Upload</li>
             <div class="side_menu_cat2" id="upload">
               <label for="fileInput">Choose <span style="color: red; font-size: .9em;"> .GeoJSON or .csv</span> </label>
-              <input type="file"  id="fileInput" accept=".Geojson, .csv, .zip" >
+              <input type="file"  id="fileInput" accept=".Geojson, .json, .csv, .zip" >
               <button id="uploadButton">Upload</button>
             </div>
           </div>
@@ -295,6 +296,10 @@
               <li onclick="handleDraw('Polygon')"><span class="material-symbols-outlined">hexagon</span></li>
               <li onclick="handleDraw('Circle')"><span class="material-symbols-outlined">circle</span></li>
               <li onclick="handleDraw('clear')"><span class="material-symbols-outlined">ink_eraser</span></li>
+              <li id="clear" >  <span class="material-symbols-outlined">clear</span></li>
+
+              <li> <a  id="download" download="features.json" href="#" >  <span class="material-symbols-outlined">save</span></a></li>
+
               
             </ul>
           </li>
@@ -338,7 +343,7 @@
                   <option value="10">1:10000</option>
                 </select>
               </form>
-              <button id="export-pdf">Export PDF</button>
+              <button id="printButton">Export PDF</button>
             </ul>
 
           </li>
@@ -449,7 +454,7 @@
             
           </li>
           
-          <li class="sidebar_items">
+          <li class="sidebar_items" id="clear_all">
             <span class="material-symbols-outlined">clear_all</span>
             
           </li>
@@ -469,7 +474,7 @@
         <ul id="base_layer_list">
           <li onclick="handletoggleLayer('raster'), activateOption(this)"> <label for="">O S M</label> <img src="./modules/standardmapimg.jpeg" alt=""> </li>
           <li onclick="handletoggleLayer('standardLayer'), activateOption(this)"> <label for="">Standard</label> <img src="./modules/standardmapimg.jpeg" alt=""> </li>
-          <li onclick="handletoggleLayer('satelite'), activateOption(this)"> <label for="">Satelite</label> <img src="./modules/osmmapimg.png" alt=""> </li>
+          <li onclick="handletoggleLayer('sateliteLayer'), activateOption(this)"> <label for="">Satelite</label> <img src="./modules/osmmapimg.png" alt=""> </li>
           <li onclick="handletoggleLayer('transportLayer'), activateOption(this)"> <label for="">Transport</label> <img src="./modules/streetmapimg.avif" alt=""> </li>
         </ul>
       </ul>
@@ -510,7 +515,13 @@
   
 </div>
 
+
+<!-- <div id="tstwndw" style="position: absolute; top: 100px; left: 400px; height: 600px; width: 600px; z-index: 3; background-color: #b8a6a6;"></div> -->
+
+
+
 <script type="module" src="./main.js" ></script>
+
 
 <script src="./custom.js"></script>
 

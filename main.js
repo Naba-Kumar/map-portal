@@ -29,7 +29,7 @@ import axios from 'axios';
 import Papa from 'papaparse';
 import { fromExtent } from 'ol/geom/Polygon';
 import * as turf from '@turf/turf';
-
+import jsPDF from 'jspdf';
 
 
 
@@ -97,7 +97,7 @@ var transportLayer = new TileLayer({
 
 
 const map = new Map({
-  layers: [raster, labelLayer, standardLayer, sateliteLayer, transportLayer],
+  layers: [raster, standardLayer, sateliteLayer, transportLayer, labelLayer],
   target: 'map',
   view: new View({
     center: new fromLonLat([92.07298769282396, 26.213469404852535]),
@@ -372,10 +372,12 @@ const style = new Style({
 function customMeasure(event) {
 
   if (event === 'clear') {
-    console.log("remove")
     map.getLayers().forEach(function (measureVector) {
       if (measureVector instanceof VectorLayer) {
+
+        console.log("measure layer remove");
         map.removeLayer(measureVector);
+
       }
     });
 
@@ -529,6 +531,9 @@ window.handleMeasure = function (event) {
 
 let shapeDraw;
 
+let drawVector; // Declare a single VectorLayer outside the function
+
+
 function customDraw(event) {
   if (event === 'clear') {
     console.log("remove")
@@ -537,12 +542,11 @@ function customDraw(event) {
         map.removeLayer(drawVector);
       }
     });
-    
     map.removeInteraction(Measureraw);
     sketch = null;
     measureTooltipElement = null;
     createMeasureTooltip();
-    
+
 
 
     // Clear the source of the measurement layers
@@ -553,17 +557,20 @@ function customDraw(event) {
     // helpTooltip.getSource().clear();
 
   }
-  const drawVector = new VectorLayer({
-    source: source,
-    style: {
-      'fill-color': 'rgba(255, 255, 255, 0.2)',
-      'stroke-color': '#164ff7',
-      'stroke-width': 2,
-      'circle-radius': 7,
-      'circle-fill-color': '#ffcc33',
-    },
-  });
-  map.addLayer(drawVector)
+  // Ensure the drawVector layer exists, if not, create it
+  if (!drawVector) {
+    drawVector = new VectorLayer({
+      source: source,
+      style: {
+        'fill-color': 'rgba(255, 255, 255, 0.2)',
+        'stroke-color': '#164ff7',
+        'stroke-width': 2,
+        'circle-radius': 7,
+        'circle-fill-color': '#ffcc33',
+      },
+    });
+    map.addLayer(drawVector);
+  }
 
 
   shapeDraw = new Draw({
@@ -1249,41 +1256,6 @@ function visualizeCSV(data) {
 //  Print option-----------
 
 
-// document.getElementById("export-pdf").addEventListener("click", function() {
-//   var format = document.getElementById("format").value;
-//   var resolution = parseInt(document.getElementById("resolution").value);
-//   var scale = parseInt(document.getElementById("scale").value);
-
-//   let printop = new PrintControl;
-//   map.addControl(printop)
-
-//   // Make sure ol-ext has been loaded
-//   if (1) {
-//     // Define print options
-//     var options = {
-//       layout: format,
-//       dpi: resolution,
-//       scale: scale
-//     };
-
-//     // Print the map
-//     printop.print(options);
-//   } else {
-//     console.error('ol-ext library is not loaded.');
-//   }
-// });
-
-
-
-// Create the map
-// var map = new ol.Map({
-//   target: 'map',
-//   layers: [standardLayer, cycleOSMLayer, transportLayer, humanitarianLayer],
-//   view: new ol.View({
-//     center: ol.proj.fromLonLat([0, 0]),
-//     zoom: 2
-//   })
-// });
 
 // handletoggleLayer
 
@@ -1465,20 +1437,51 @@ document.addEventListener('DOMContentLoaded', function () {
 
 document.getElementById('printButton').addEventListener('click', function () {
   console.log("hii")
-  // Create a new window for printing
-  var printWindow = window.open('', '_blank');
-  var printDocument = printWindow.document;
 
-  // Create a clone of the map container
-  var mapContainer = document.getElementById('map').cloneNode(true);
-
-  // Append the cloned map container to the print document
-  printDocument.body.appendChild(mapContainer);
-
-  // Trigger print
-  printWindow.print();
+  window.document.getElementById("map").print()
 
 });
 
 // map.addControl(printControl);
 // print tool
+
+
+
+
+
+
+
+const clear = document.getElementById('clear');
+clear.addEventListener('click', function () {
+  source.clear();
+});
+
+
+//new 
+
+// const format = new ol.format.GeoJSON({featureProjection: 'EPSG:3857'}); // Uncomment this line and replace 'ol' with your library name if different
+const download = document.getElementById('download');
+download.addEventListener('click', function () {
+  try {
+
+    const geojsonFormat = new GeoJSON({ featureProjection: 'EPSG:3857' });
+    const features = drawVector.getSource().getFeatures(); // Assuming 'drawVector' is the vector layer
+    const json = geojsonFormat.writeFeatures(features);
+    console.log(json)
+    download.href = 'data:application/json;charset=utf-8,' + encodeURIComponent(json);
+  } catch (error) {
+    console.error("Error during download:", error);
+    // Handle the error appropriately, e.g., display a user-friendly message.
+  }
+});
+
+
+
+const clear_all =document.getElementById("clear_all");
+clear_all.addEventListener('click', function(){
+  map.getLayers().forEach(function(layer) {
+      if (layer instanceof VectorLayer) {
+        map.removeLayer(layer);
+      }
+    });
+})
