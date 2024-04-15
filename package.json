@@ -15,7 +15,7 @@
     "axios": "^1.6.8",
     "fs": "^0.0.1-security",
     "ol": "latest",
-    "ol-ext": "^4.0.17",
+    "ol-ext": "^4.0.18",
     "ol-geocoder": "^4.3.3",
     "ol-layerswitcher": "^4.1.1",
     "papaparse": "^5.4.1",
