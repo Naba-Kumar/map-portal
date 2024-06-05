@@ -241,17 +241,7 @@
           </div>
 
 
-            <div class="side_menu_container_optins">
-              <li onclick="display_toggle_block('requestData')">Request Data</li>
-              <div class="select-container, side_menu_cat2" id="requestData">
-                <label for="Search_area">Search : </label>
-                <input type="text" id="locationInput" placeholder="Enter location name">
-                <br>
-                <button id="clearButton"  onclick="clearLocation()">Clear</button>
-                <div id="resultContainer" class="result-container">
-                  <!-- Results will be displayed here -->
-              </div>
-              </div>
+          
             
 
         </ul>
@@ -276,17 +266,6 @@
             <span class="material-symbols-outlined" id="fullscreen_out"
               onclick="handleFullscreen('easeOut')">Fullscreen_exit</span>
             </li>
-            
-            <!-- <li class="sidebar_items" onclick="display_toggle('edit_tool')">
-            <span class="material-symbols-outlined">edit</span>
-            <ul id="edit_tool" class="sub-menu">
-              <li onclick="handleDraw('Point')"><span class="material-symbols-outlined">radio_button_checked</span></li>
-              <li onclick="handleDraw('LineString')"><span class="material-symbols-outlined">timeline</span></li>
-              <li onclick="handleDraw('Polygon')"><span class="material-symbols-outlined">hexagon</span></li>
-              <li onclick="handleDraw('Circle')"><span class="material-symbols-outlined">circle</span></li>
-              <li onclick="handleDraw('undo')"><span class="material-symbols-outlined">undo</span></li>
-            </ul>
-          </li> -->
           
           <li class="sidebar_items" onclick="display_toggle('edit_tool')">
             <span class="material-symbols-outlined">edit</span>
@@ -295,10 +274,12 @@
               <li onclick="handleDraw('LineString')"><span class="material-symbols-outlined">timeline</span></li>
               <li onclick="handleDraw('Polygon')"><span class="material-symbols-outlined">hexagon</span></li>
               <li onclick="handleDraw('Circle')"><span class="material-symbols-outlined">circle</span></li>
-              <li onclick="handleDraw('clear')"><span class="material-symbols-outlined">ink_eraser</span></li>
-              <li id="clear" >  <span class="material-symbols-outlined">clear</span></li>
+              <li onclick="handleDraw('freehand')"><span class="material-symbols-outlined">gesture</span></li>
+              <li id="draw_undo" >  <span class="material-symbols-outlined">undo</span></li>
 
-              <li> <a  id="download" download="features.json" href="#" >  <span class="material-symbols-outlined">save</span></a></li>
+              <li onclick="handleDraw('clear')"><span class="material-symbols-outlined">ink_eraser</span></li>
+              
+              <li> <a style="color: black;"  id="download" download="features.json" href="#" >  <span class="material-symbols-outlined">save</span></a></li>
 
               
             </ul>
@@ -409,10 +390,12 @@
             <span class="material-symbols-outlined" onclick="display_toggle_side_Popup('pindrop_tool')">pin_drop</span>
             <ul id="pindrop_tool" class="sub-menu, side_menu_popup">
               <form class="form">
-                <label for="format">Enter Longitude </label>
-                <input type="text" id="lon" placeholder="Longitude" value="">
-                <label for="resolution">Enter Latitude </label>
-                <input type="text" id="lat" placeholder="Latitude">
+                <label for="lat" >Enter Latitude </label>
+                <input type="text" id="lat" placeholder="Latitude" value="" >
+
+                <label for="lon">Enter  Longitude</label>
+                <input type="text" id="lon" placeholder="Longitude"  value="">
+
               </form>
               <button id="locate_Pindrop">Pindrop</button>
               <button id="locate_Pinremove">Remove</button>
@@ -496,8 +479,8 @@
     <div>
       <div id="long_lat">
         <p>Coordinate :</p>
-        <!-- <input type="text" id="lonlat"> -->
-        <div id="lonlat_display"></div>
+  
+        <div id="lonlat_display" style="text-align: center;"> </div>
         
       </div>
       <div id="org_info">

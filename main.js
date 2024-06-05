@@ -30,6 +30,8 @@ import Papa from 'papaparse';
 import { fromExtent } from 'ol/geom/Polygon';
 import * as turf from '@turf/turf';
 import jsPDF from 'jspdf';
+import Snap from 'ol/interaction/Snap';
+import { fromCircle } from 'ol/geom/Polygon';
 
 
 
@@ -42,7 +44,9 @@ const raster = new TileLayer({
 
 // const source = new VectorSource();
 
-const source = new VectorSource({ wrapX: false });
+const drsource = new VectorSource({ wrapX: false });
+const mrsource = new VectorSource({ wrapX: false });
+
 
 
 
@@ -285,10 +289,9 @@ const pointerMoveHandler = function (evt) {
     return;
   }
   /** @type {string} */
-  let helpMsg = '';
+  let helpMsg = 'Click to start drawing';
 
   if (sketch) {
-    helpMsg = 'Click to start drawing';
     const geom = sketch.getGeometry();
     if (geom instanceof Polygon) {
       helpMsg = continuePolygonMsg;
@@ -354,7 +357,7 @@ const style = new Style({
   stroke: new Stroke({
     color: 'rgba(0, 0, 0, 0.5)',
     lineDash: [10, 10],
-    width: 2,
+    width: 5,
   }),
   image: new CircleStyle({
     radius: 5,
@@ -372,23 +375,29 @@ const style = new Style({
 function customMeasure(event) {
 
   if (event === 'clear') {
-    map.getLayers().forEach(function (measureVector) {
-      if (measureVector instanceof VectorLayer) {
 
-        console.log("measure layer remove");
-        map.removeLayer(measureVector);
-
+    if (measureTooltipElement) {
+      var elem = document.getElementsByClassName("ol-tooltip ol-tooltip-static");
+      for (var i = elem.length - 1; i >= 0; i--) {
+        elem[i].remove();
       }
-    });
+    }
 
+    // map.getLayers().forEach(function (measureVector) {
+
+    //   if (measureVector instanceof VectorLayer) {
+    //     console.log("measure layer remove");
+    //     map.removeLayer(measureVector);
+    //   }
+    // });
     // Clear the source of the measurement layers
-    source.clear();
-
+    mrsource.clear();
+    measureTooltip.getSource().clear();
+    console.log(measureTooltip.getSource())
     return
-    // measureTooltip.getSource().clear();
-    // helpTooltip.getSource().clear();
-
   }
+
+
   map.removeInteraction(shapeDraw);
   sketch = null;
   measureTooltipElement = null;
@@ -396,7 +405,7 @@ function customMeasure(event) {
 
 
   const measureVector = new VectorLayer({
-    source: source,
+    source: mrsource,
     style: {
       'fill-color': 'rgba(255, 255, 255, 0.2)',
       'stroke-color': '#075225',
@@ -413,7 +422,7 @@ function customMeasure(event) {
   // console.log(type)
 
   Measureraw = new Draw({
-    source: source,
+    source: mrsource,
     type: event,
     style: function (feature) {
       const geometryType = feature.getGeometry().getType();
@@ -462,6 +471,8 @@ function customMeasure(event) {
     createMeasureTooltip();
     unByKey(listener);
     map.removeInteraction(Measureraw);
+    map.removeOverlay(helpTooltip);
+
 
   });
 
@@ -536,57 +547,68 @@ let drawVector; // Declare a single VectorLayer outside the function
 
 function customDraw(event) {
   if (event === 'clear') {
-    console.log("remove")
-    map.getLayers().forEach(function (drawVector) {
-      if (drawVector instanceof VectorLayer) {
-        map.removeLayer(drawVector);
-      }
-    });
+    drsource.clear();
     map.removeInteraction(Measureraw);
     sketch = null;
     measureTooltipElement = null;
     createMeasureTooltip();
-
-
-
-    // Clear the source of the measurement layers
-    source.clear();
-
+    drsource.clear();
     return
-    // measureTooltip.getSource().clear();
-    // helpTooltip.getSource().clear();
+
 
   }
   // Ensure the drawVector layer exists, if not, create it
   if (!drawVector) {
     drawVector = new VectorLayer({
-      source: source,
+      source: drsource,
       style: {
         'fill-color': 'rgba(255, 255, 255, 0.2)',
         'stroke-color': '#164ff7',
         'stroke-width': 2,
         'circle-radius': 7,
-        'circle-fill-color': '#ffcc33',
+        'circle-fill-color': '#164ff7',
+
       },
     });
     map.addLayer(drawVector);
   }
 
+  if (event === 'freehand') {
+    shapeDraw = new Draw({
+      source: drsource,
+      type: 'LineString',
+      freehand: true,
+      style: new Style({
+        fill: new Fill({
+          color: 'rgba(255, 255, 255, 0.5)',
+        }),
+        stroke: new Stroke({
+          color: 'rgba(0, 0, 0, 0.8)',
+          lineDash: [10, 10],
+          width: 2,
+        }),
+      })
+    });
 
-  shapeDraw = new Draw({
-    source: source,
-    type: event,
-    style: new Style({
-      fill: new Fill({
-        color: 'rgba(255, 255, 255, 0.5)',
-      }),
-      stroke: new Stroke({
-        color: 'rgba(0, 0, 0, 0.8)',
-        lineDash: [10, 10],
-        width: 2,
-      }),
-    })
-  });
+  }
+  else {
+
+    shapeDraw = new Draw({
+      source: drsource,
+      type: event,
+      style: new Style({
+        fill: new Fill({
+          color: 'rgba(255, 255, 255, 0.5)',
+        }),
+        stroke: new Stroke({
+          color: 'rgba(0, 0, 0, 0.8)',
+          lineDash: [10, 10],
+          width: 5,
+        }),
+      })
+    });
+  }
+
   map.addInteraction(shapeDraw);
 
   createMeasureTooltip();
@@ -606,6 +628,7 @@ function customDraw(event) {
     createMeasureTooltip();
     unByKey(listener);
     map.removeInteraction(shapeDraw);
+    map.removeOverlay(helpTooltip);
   });
 }
 window.handleDraw = function (event) {
@@ -613,10 +636,12 @@ window.handleDraw = function (event) {
   customDraw(event);
 };
 
+
+document.getElementById('draw_undo').addEventListener('click', function () {
+  shapeDraw.removeLastPoint();
+});
+
 //  Draw ends here............................
-
-
-
 
 
 
@@ -638,8 +663,15 @@ map.addLayer(pinLayer);
 
 document.getElementById('locate_Pindrop').addEventListener('click', function () {
   // Get longitude and latitude values from input fields
-  let lon = parseFloat(document.getElementById("lon").value);
   let lat = parseFloat(document.getElementById("lat").value);
+  let lon = parseFloat(document.getElementById("lon").value);
+  console.log("lat")
+  console.log(lat)
+
+  console.log("lon")
+  console.log(lon)
+
+
 
   // Ensure that lon and lat are valid numbers
   if (isNaN(lon) || isNaN(lat) || lon < -180 || lon > 180 || lat < -90 || lat > 90) {
@@ -650,7 +682,7 @@ document.getElementById('locate_Pindrop').addEventListener('click', function () 
   // Center the map view to the specified coordinates
 
   map.getView().setCenter(new fromLonLat([lon, lat]));
-  map.getView().setZoom(10); // Set desired zoom level
+  map.getView().setZoom(15); // Set desired zoom level
 
   // Drop a pin at the specified coordinates
   let pinFeature = new Feature({
@@ -688,6 +720,7 @@ document.getElementById('locate_Pinremove').addEventListener('click', function (
 
 
 
+
 // coordinate tool starts ................
 
 const coordPos = document.getElementById('lonlat_display');
@@ -701,6 +734,10 @@ let mousePos = new MousePosition({
     // const formattedCoords = `${coordinate[1]}, ${coordinate[0]}`; // [y], [x] order
 
     let point = new fromLonLat([coordinate[1], coordinate[0]], projection);
+
+    // document.getElementById('lon').value = point[0];
+    // document.getElementById('lat').value = point[1];
+
 
     let ltdegrees = Math.floor(point[0]);
     let ltminutes = (point[0] - ltdegrees) * 60;
@@ -1371,7 +1408,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Center the map view to the specified coordinates
 
     map.getView().setCenter(new fromLonLat([lon, lat]));
-    map.getView().setZoom(10); // Set desired zoom level
+    map.getView().setZoom(16); // Set desired zoom level
 
     // Drop a pin at the specified coordinates
     let pinFeature = new Feature({
@@ -1451,10 +1488,10 @@ document.getElementById('printButton').addEventListener('click', function () {
 
 
 
-const clear = document.getElementById('clear');
-clear.addEventListener('click', function () {
-  source.clear();
-});
+// const clear = document.getElementById('clear');
+// clear.addEventListener('click', function () {
+//   source.clear();
+// });
 
 
 //new 
@@ -1462,13 +1499,29 @@ clear.addEventListener('click', function () {
 // const format = new ol.format.GeoJSON({featureProjection: 'EPSG:3857'}); // Uncomment this line and replace 'ol' with your library name if different
 const download = document.getElementById('download');
 download.addEventListener('click', function () {
+  console.log("hi I'm inside export");
   try {
+    const geojsonFormat = new GeoJSON({ featureProjection: 'EPSG:3857' }); // Assuming 'ol' is the OpenLayers namespace
+    const features = drsource.getFeatures(); // Assuming 'drsource' is the vector source
 
-    const geojsonFormat = new GeoJSON({ featureProjection: 'EPSG:3857' });
-    const features = drawVector.getSource().getFeatures(); // Assuming 'drawVector' is the vector layer
+    // Convert circles to polygons
+    // features.forEach(feature => {
+    //   const geometry = feature.getGeometry();
+    //   if (geometry.getType() === 'Circle') {
+    //     const center = geometry.getCenter();
+    //     const radius = geometry.getRadius();
+
+    //     const circlePolygon =  Polygon.fromCircle(new Circle(center, radius));
+    //     feature.setGeometry(circlePolygon);
+    //   }
+    // });
+
     const json = geojsonFormat.writeFeatures(features);
-    console.log(json)
+
+    // Create data URI with correct MIME type and filename
     download.href = 'data:application/json;charset=utf-8,' + encodeURIComponent(json);
+    download.download = 'data.geojson'; // Specify the filename with .geojson extension
+    console.log(features);
   } catch (error) {
     console.error("Error during download:", error);
     // Handle the error appropriately, e.g., display a user-friendly message.
@@ -1477,11 +1530,25 @@ download.addEventListener('click', function () {
 
 
 
-const clear_all =document.getElementById("clear_all");
-clear_all.addEventListener('click', function(){
-  map.getLayers().forEach(function(layer) {
-      if (layer instanceof VectorLayer) {
-        map.removeLayer(layer);
-      }
-    });
+
+
+const clear_all = document.getElementById("clear_all");
+clear_all.addEventListener('click', function () {
+  map.getLayers().forEach(function (layer) {
+    if (layer instanceof VectorLayer) {
+      map.removeLayer(layer);
+    }
+  });
 })
+
+
+const clear_alll = document.getElementById('clear_alll');
+function cleaning() {
+  console.log("hii")
+}
+
+
+
+window.handle_clear_alll = function () {
+  cleaning();
+};
